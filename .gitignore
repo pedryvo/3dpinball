@@ -1,0 +1,24 @@
+# Dependencies & Build
+node_modules/
+dist/
+.vercel/
+.env
+.env.*
+*.log
+.DS_Store
+
+# Original Installer & Executables (Never commit game binaries)
+3D Ultra Pinball1.exe
+extracted/
+*.exe
+*.EXE
+*.dll
+*.DLL
+*.mvb
+*.MVB
+*.win
+*.WIN
+*.avi
+*.AVI
+RESOURCE.001
+RESOURCE.002
