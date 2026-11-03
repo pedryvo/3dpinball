@@ -3,10 +3,10 @@ import { en } from './en';
 import { es } from './es';
 import { ptBR } from './pt-BR';
 import { ru } from './ru';
-import type { LocaleCode, TranslationDictionary } from './types';
+import type { LocaleCode, TableId, TableTranslation, TranslationDictionary } from './types';
 import { zhCN } from './zh-CN';
 
-export type { LocaleCode, TranslationDictionary } from './types';
+export type { LocaleCode, TableId, TableTranslation, TranslationDictionary } from './types';
 
 export const TRANSLATIONS: Record<LocaleCode, TranslationDictionary> = {
   'pt-BR': ptBR,
@@ -18,6 +18,11 @@ export const TRANSLATIONS: Record<LocaleCode, TranslationDictionary> = {
 };
 
 export const SUPPORTED_LOCALES: LocaleCode[] = ['pt-BR', 'en', 'es', 'ru', 'zh-CN', 'de'];
+
+export function getTableTranslation(dict: TranslationDictionary, id: TableId): TableTranslation {
+  if (id === 'command_post') return dict.tables.commandPost;
+  return dict.tables[id];
+}
 
 const STORAGE_KEY = '3dpinball_locale';
 

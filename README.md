@@ -7,7 +7,7 @@
 [![TypeScript](https://img.shields.io/badge/typescript-5.5-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![WebAssembly](https://img.shields.io/badge/webassembly-physics_core-654ff0?logo=webassembly&logoColor=white)](https://webassembly.org/)
 [![Status](https://img.shields.io/badge/status-playable-success)](#-progress)
-[![Phase](https://img.shields.io/badge/phase-1_%E2%80%94_reverse_engineering_%26_foundation-blue)](docs/PLAN.md)
+[![Phase](https://img.shields.io/badge/phase-6_%E2%80%94_production_ready-success)](docs/PLAN.md)
 [![Platforms](https://img.shields.io/badge/platforms-Web_%7C_Vercel_%7C_Mobile-lightgrey)](#-running-the-game)
 [![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)](LICENSE)
 
@@ -41,13 +41,13 @@ Unlike heavyweight x86 emulators, this port runs natively in TypeScript, WebAsse
 |---|:---:|---|
 | **Plan & Architecture** | ✅ | Full project breakdown and roadmap · [`docs/PLAN.md`](docs/PLAN.md) |
 | **REA Reverse Engineering** | ✅ | PE analysis of `PINBALL.EXE` (`4e675a78ba3a...`), exports, RTTI, and installer decompression · [`re/binary_analysis.json`](re/binary_analysis.json) |
-| **`RESOURCE.MAP` / `.001` Parser** | 🟡 | Binary chunk parser for `.BMP`, `.PAL`, `.ANM`, `.ITF`, `.WAV`, `.MID`, `.RES` · [spec](docs/formats/resource_map.md) |
-| **256-Color & Z-Buffer Renderer** | 🟡 | 8-bit indexed playfield, animated targets, flippers, ramps, and LED scoreboard |
-| **WebAssembly Physics Core** | 🟡 | Sub-step ball collision (`PB_COL`), ramp splines (`PB_SPLIN`), flippers, kickers, and tilt mechanics |
-| **Audio Engine** | 🟡 | Web Audio API sound effects & synthesizer music manager with stereo panning · [spec](docs/formats/sound.md) |
-| **3 Playable Tables** | 🟡 | **Colony**, **Command Post**, and **Mine** progression, mini-objectives, and multiball |
-| **HTML5 Native UI** | 🟡 | Windows 95 / Space Outpost chrome, menu dropdowns, table picker, preferences, and high scores |
-| **Mobile Touch Controls** | 🟡 | On-screen Left/Right Flippers, Plunger launch bar, and Nudge buttons for iOS & Android |
+| **`RESOURCE.MAP` / `.001` Parser** | ✅ | Binary chunk parser for `.BMP`, `.PAL`, `.ANM`, `.ITF`, `.WAV`, `.MID`, `.RES` · [spec](docs/formats/resource_map.md) |
+| **256-Color & Z-Buffer Renderer** | ✅ | 8-bit indexed playfield, animated targets, flippers, ramps, and LED scoreboard |
+| **WebAssembly Physics Core** | ✅ | Sub-step ball collision (`PB_COL`), ramp splines (`PB_SPLIN`), flippers, kickers, and tilt mechanics |
+| **Audio Engine** | ✅ | Web Audio API sound effects & synthesizer music manager with stereo panning · [spec](docs/formats/sound.md) |
+| **3 Playable Tables** | ✅ | **Colony**, **Command Post**, and **Mine** progression, mini-objectives, and multiball |
+| **HTML5 Native UI** | ✅ | Windows 95 / Space Outpost chrome, menu dropdowns, table picker, preferences, and high scores |
+| **Mobile Touch Controls** | ✅ | On-screen Left/Right Flippers, Plunger launch bar, and Nudge buttons for iOS & Android |
 | **Localization (i18n)** | ✅ | 6 full languages supported: PT-BR, EN, ES, RU, ZH-CN, DE |
 | **Vercel & PWA Ready** | ✅ | Optimized static build with edge caching headers (`vercel.json`) |
 

@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>3-D Ultra Pinball (Dynamix / Sierra 1995)</title>
+  <meta name="description" content="Port Web (WebAssembly, TypeScript, HTML5 Canvas, Web Audio API) do clássico 3-D Ultra Pinball da Dynamix e Sierra de 1995.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23e02020'/><polygon points='35,25 75,50 35,75' fill='%23ffffff'/></svg>">
+  <style>
+    :root {
+      --win-bg: #c0c0c0;
+      --win-border-light: #ffffff;
+      --win-border-dark: #808080;
+      --win-border-black: #000000;
+      --win-title: #000080;
+      --win-title-active: #1084d0;
+      --win-text: #000000;
+      --space-dark: #0a0e17;
+      --space-led: #00ff66;
+      --space-amber: #ffbb00;
+      --space-cyan: #00d0ff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+    }
+
+    body {
+      background-color: #0b101b;
+      background-image: 
+        radial-gradient(circle at 50% 50%, rgba(20, 36, 68, 0.4) 0%, transparent 80%),
+        repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.15) 0px, rgba(0, 0, 0, 0.15) 1px, transparent 1px, transparent 2px);
+      font-family: "MS Sans Serif", Tahoma, "Segoe UI", Arial, sans-serif;
+      font-size: 11px;
+      color: var(--win-text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+      padding: 8px;
+    }
+
+    /* Win95 Window Container */
+    .win-window {
+      background: var(--win-bg);
+      border-top: 2px solid var(--win-border-light);
+      border-left: 2px solid var(--win-border-light);
+      border-right: 2px solid var(--win-border-black);
+      border-bottom: 2px solid var(--win-border-black);
+      box-shadow: 1px 1px 0 var(--win-border-dark), 0 8px 32px rgba(0, 0, 0, 0.85);
+      max-width: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Win95 Title Bar */
+    .win-title-bar {
+      background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+      color: #ffffff;
+      padding: 3px 5px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-weight: bold;
+      font-size: 12px;
+      letter-spacing: 0.5px;
+    }
+
+    .win-title-text {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .win-title-icon {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #ffffff 0%, #d81b24 60%, #580005 100%);
+      border: 1px solid #ffffff;
+    }
+
+    .win-title-controls {
+      display: flex;
+      gap: 3px;
+    }
+
+    .win-btn {
+      width: 16px;
+      height: 14px;
+      background: var(--win-bg);
+      border-top: 1px solid var(--win-border-light);
+      border-left: 1px solid var(--win-border-light);
+      border-right: 1px solid var(--win-border-black);
+      border-bottom: 1px solid var(--win-border-black);
+      font-family: monospace;
+      font-size: 9px;
+      line-height: 11px;
+      text-align: center;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .win-btn:active {
+      border-top: 1px solid var(--win-border-black);
+      border-left: 1px solid var(--win-border-black);
+      border-right: 1px solid var(--win-border-light);
+      border-bottom: 1px solid var(--win-border-light);
+      padding: 1px 0 0 1px;
+    }
+
+    /* Menu Bar */
+    .menu-bar {
+      display: flex;
+      background: var(--win-bg);
+      padding: 2px 4px;
+      border-bottom: 1px solid var(--win-border-dark);
+      position: relative;
+    }
+
+    .menu-bar-btn {
+      background: none;
+      border: 1px solid transparent;
+      padding: 3px 8px;
+      font-family: inherit;
+      font-size: 11px;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .menu-bar-btn:hover {
+      border-top: 1px solid var(--win-border-light);
+      border-left: 1px solid var(--win-border-light);
+      border-right: 1px solid var(--win-border-dark);
+      border-bottom: 1px solid var(--win-border-dark);
+    }
+
+    .menu-bar-btn:active {
+      border-top: 1px solid var(--win-border-dark);
+      border-left: 1px solid var(--win-border-dark);
+      border-right: 1px solid var(--win-border-light);
+      border-bottom: 1px solid var(--win-border-light);
+    }
+
+    /* Dropdown Menus */
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      background: var(--win-bg);
+      border-top: 1px solid var(--win-border-light);
+      border-left: 1px solid var(--win-border-light);
+      border-right: 2px solid var(--win-border-black);
+      border-bottom: 2px solid var(--win-border-black);
+      box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
+      z-index: 100;
+      min-width: 170px;
+      padding: 2px;
+    }
+
+    .dropdown-menu.visible {
+      display: block;
+    }
+
+    .dropdown-item {
+      padding: 4px 18px 4px 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      white-space: nowrap;
+    }
+
+    .dropdown-item:hover {
+      background: #000080;
+      color: #ffffff;
+    }
+
+    .dropdown-divider {
+      height: 1px;
+      background: var(--win-border-dark);
+      border-bottom: 1px solid var(--win-border-light);
+      margin: 2px 1px;
+    }
+
+    .dropdown-item[data-checked="true"]::before {
+      content: "✓ ";
+      font-weight: bold;
+    }
+
+    /* Canvas Frame */
+    .canvas-container {
+      background: #000000;
+      padding: 2px;
+      border-top: 2px solid var(--win-border-dark);
+      border-left: 2px solid var(--win-border-dark);
+      border-right: 2px solid var(--win-border-light);
+      border-bottom: 2px solid var(--win-border-light);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    #pinball-canvas {
+      display: block;
+      width: 640px;
+      height: 480px;
+      max-width: 100%;
+      height: auto;
+      aspect-ratio: 640 / 480;
+      image-rendering: pixelated;
+    }
+
+    /* Status Bar */
+    .win-status-bar {
+      display: flex;
+      gap: 4px;
+      padding: 3px 4px;
+      background: var(--win-bg);
+      border-top: 1px solid var(--win-border-dark);
+      font-size: 11px;
+    }
+
+    .status-panel {
+      padding: 2px 6px;
+      border-top: 1px solid var(--win-border-dark);
+      border-left: 1px solid var(--win-border-dark);
+      border-right: 1px solid var(--win-border-light);
+      border-bottom: 1px solid var(--win-border-light);
+    }
+
+    .status-panel.grow {
+      flex: 1;
+    }
+
+    /* Mobile Touch Control Panel */
+    .touch-controls {
+      display: none;
+      width: 100%;
+      max-width: 640px;
+      margin-top: 6px;
+      padding: 8px;
+      background: rgba(14, 20, 32, 0.95);
+      border: 1px solid #22384e;
+      border-radius: 6px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
+      touch-action: manipulation;
+    }
+
+    @media (max-width: 800px), (pointer: coarse) {
+      .touch-controls {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+    }
+
+    .touch-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .touch-btn {
+      flex: 1;
+      height: 52px;
+      background: linear-gradient(180deg, #2b394e 0%, #17202c 100%);
+      color: #ffffff;
+      border: 2px solid #4a6282;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    }
+
+    .touch-btn.flipper {
+      height: 64px;
+      background: linear-gradient(180deg, #d81b24 0%, #8a0c12 100%);
+      border-color: #ff5252;
+      font-size: 15px;
+    }
+
+    .touch-btn.plunger {
+      height: 64px;
+      background: linear-gradient(180deg, #d8961b 0%, #8a580c 100%);
+      border-color: #ffd152;
+      font-size: 14px;
+    }
+
+    .touch-btn.nudge {
+      height: 40px;
+      background: linear-gradient(180deg, #3d4f66 0%, #202b38 100%);
+      font-size: 11px;
+    }
+
+    .touch-btn:active, .touch-btn.active {
+      transform: translateY(2px);
+      filter: brightness(1.3);
+      border-color: #ffffff;
+    }
+
+    /* Modal Dialogs */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.65);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-dialog {
+      background: var(--win-bg);
+      border-top: 2px solid var(--win-border-light);
+      border-left: 2px solid var(--win-border-light);
+      border-right: 2px solid var(--win-border-black);
+      border-bottom: 2px solid var(--win-border-black);
+      box-shadow: 2px 2px 0 var(--win-border-dark), 0 12px 36px rgba(0,0,0,0.8);
+      max-width: 520px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-body {
+      padding: 12px;
+      font-size: 12px;
+      line-height: 1.5;
+      max-height: 75vh;
+      overflow-y: auto;
+    }
+
+    .modal-footer {
+      padding: 8px 12px;
+      display: flex;
+      justify-content: flex-end;
+      background: var(--win-bg);
+      border-top: 1px solid var(--win-border-dark);
+    }
+
+    .btn-dialog {
+      background: var(--win-bg);
+      border-top: 1px solid var(--win-border-light);
+      border-left: 1px solid var(--win-border-light);
+      border-right: 1px solid var(--win-border-black);
+      border-bottom: 1px solid var(--win-border-black);
+      padding: 4px 16px;
+      font-family: inherit;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .btn-dialog:active {
+      border-top: 1px solid var(--win-border-black);
+      border-left: 1px solid var(--win-border-black);
+      border-right: 1px solid var(--win-border-light);
+      border-bottom: 1px solid var(--win-border-light);
+      padding: 5px 15px 3px 17px;
+    }
+
+    /* High Scores Table */
+    .scores-table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid var(--win-border-dark);
+      background: #ffffff;
+      font-family: monospace;
+    }
+
+    .scores-table th {
+      background: #d4d0c8;
+      border: 1px solid var(--win-border-dark);
+      padding: 4px 6px;
+      text-align: left;
+    }
+
+    .scores-table td {
+      border: 1px solid #e0e0e0;
+      padding: 4px 6px;
+    }
+
+    .col-rank { width: 30px; font-weight: bold; color: #d81b24; }
+    .col-score { font-weight: bold; color: #000080; text-align: right; }
+
+    /* Table Selection Cards */
+    .table-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .table-choice-card {
+      border: 2px solid var(--win-border-dark);
+      background: #e4e4e4;
+      padding: 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s ease;
+    }
+
+    .table-choice-card:hover {
+      border-color: #000080;
+      background: #f0f4ff;
+      transform: translateY(-2px);
+    }
+
+    .table-card-title {
+      font-weight: bold;
+      margin-bottom: 4px;
+      color: #000080;
+    }
+
+    .table-card-desc {
+      font-size: 10px;
+      color: #444;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Win95 Main Window Chrome -->
+  <div class="win-window">
+    <div class="win-title-bar">
+      <div class="win-title-text">
+        <div class="win-title-icon"></div>
+        <span>3-D Ultra Pinball - Space Outpost (Dynamix / Sierra 1995)</span>
+      </div>
+      <div class="win-title-controls">
+        <div class="win-btn" title="Minimize">_</div>
+        <div class="win-btn" title="Maximize">□</div>
+        <div class="win-btn" title="Close">✕</div>
+      </div>
+    </div>
+
+    <!-- Dropdown Menu Bar -->
+    <div class="menu-bar">
+      <!-- Game Menu -->
+      <button class="menu-bar-btn" id="menu-btn-game" data-menu="game">Jogo</button>
+      <div class="dropdown-menu" id="dropdown-game">
+        <div class="dropdown-item" data-action="new-game" id="item-new-game">Novo Jogo (F2)</div>
+        <div class="dropdown-item" data-action="pause" id="item-pause">Pausar (P)</div>
+        <div class="dropdown-divider"></div>
+        <div class="dropdown-item" data-action="high-scores" id="item-high-scores">Recordes</div>
+        <div class="dropdown-divider"></div>
+        <div class="dropdown-item" data-action="new-game">Reiniciar Mesa</div>
+      </div>
+
+      <!-- Options Menu -->
+      <button class="menu-bar-btn" id="menu-btn-options" data-menu="options">Opções</button>
+      <div class="dropdown-menu" id="dropdown-options">
+        <div class="dropdown-item" data-action="toggle-sfx" data-checked="true" id="item-sfx">Efeitos Sonoros (SFX)</div>
+        <div class="dropdown-item" data-action="toggle-music" data-checked="true" id="item-music">Música FM Sintetizada</div>
+        <div class="dropdown-divider"></div>
+        <div class="dropdown-item" data-action="fullscreen" id="item-fullscreen">Tela Cheia</div>
+      </div>
+
+      <!-- Table Menu -->
+      <button class="menu-bar-btn" id="menu-btn-table" data-menu="table">Mesa</button>
+      <div class="dropdown-menu" id="dropdown-table">
+        <div class="dropdown-item" data-action="table-outpost">1. Colônia Espacial (Outpost)</div>
+        <div class="dropdown-item" data-action="table-cp">2. Posto de Comando (Command Post)</div>
+        <div class="dropdown-item" data-action="table-mine">3. Mina de Cristais (Mine)</div>
+        <div class="dropdown-divider"></div>
+        <div class="dropdown-item" data-action="table-picker" id="item-select-table">Selecionar Mesa...</div>
+      </div>
+
+      <!-- Language Menu -->
+      <button class="menu-bar-btn" id="menu-btn-language" data-menu="language">Idioma</button>
+      <div class="dropdown-menu" id="dropdown-language">
+        <div class="dropdown-item" data-action="set-locale" data-locale="pt-BR">🇧🇷 Português do Brasil</div>
+        <div class="dropdown-item" data-action="set-locale" data-locale="en">🇺🇸 English</div>
+        <div class="dropdown-item" data-action="set-locale" data-locale="es">🇪🇸 Español</div>
+        <div class="dropdown-item" data-action="set-locale" data-locale="de">🇩🇪 Deutsch</div>
+        <div class="dropdown-item" data-action="set-locale" data-locale="zh-CN">🇨🇳 简体中文</div>
+        <div class="dropdown-item" data-action="set-locale" data-locale="ru">🇷🇺 Русский</div>
+      </div>
+
+      <!-- Help Menu -->
+      <button class="menu-bar-btn" id="menu-btn-help" data-menu="help">Ajuda</button>
+      <div class="dropdown-menu" id="dropdown-help">
+        <div class="dropdown-item" data-action="controls" id="item-controls">Controles</div>
+        <div class="dropdown-divider"></div>
+        <div class="dropdown-item" data-action="credits" id="item-credits">Sobre / Créditos</div>
+      </div>
+    </div>
+
+    <!-- Canvas Frame -->
+    <div class="canvas-container">
+      <canvas id="pinball-canvas" width="640" height="480"></canvas>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="win-status-bar">
+      <div class="status-panel grow" id="status-hint">Shift / Barra de Espaço para jogar | Z / / para Flippers</div>
+      <div class="status-panel">640×480 @ 60Hz</div>
+      <div class="status-panel">WASM 480Hz Core</div>
+    </div>
+  </div>
+
+  <!-- Mobile Touch Controls -->
+  <div class="touch-controls">
+    <!-- Nudge Row -->
+    <div class="touch-row">
+      <button class="touch-btn nudge" id="btn-touch-nudge-left">⇦ Empurrar Esq</button>
+      <button class="touch-btn nudge" id="btn-touch-nudge-up">⇧ Empurrar Cima</button>
+      <button class="touch-btn nudge" id="btn-touch-nudge-right">Empurrar Dir ⇨</button>
+    </div>
+    <!-- Main Flipper & Plunger Row -->
+    <div class="touch-row">
+      <button class="touch-btn flipper" id="btn-touch-flipper-left">◄ Flipper Esq</button>
+      <button class="touch-btn plunger" id="btn-touch-plunger">Lançar Bola (Mola)</button>
+      <button class="touch-btn flipper" id="btn-touch-flipper-right">Flipper Dir ►</button>
+    </div>
+  </div>
+
+  <!-- High Scores Modal -->
+  <div class="modal-overlay" id="modal-scores">
+    <div class="modal-dialog">
+      <div class="win-title-bar">
+        <span id="modal-title-scores">Galeria dos Melhores Pilotos (Recordes)</span>
+        <button class="win-btn modal-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <table class="scores-table">
+          <thead>
+            <tr>
+              <th>Pos</th>
+              <th>Piloto</th>
+              <th>Pontuação</th>
+              <th>Mesa</th>
+              <th>Data</th>
+            </tr>
+          </thead>
+          <tbody id="high-scores-body"></tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-dialog btn-dialog-close">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table Selection Modal -->
+  <div class="modal-overlay" id="modal-tables">
+    <div class="modal-dialog">
+      <div class="win-title-bar">
+        <span id="modal-title-tables">Selecionar Mesa Espacial</span>
+        <button class="win-btn modal-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="table-cards-grid">
+          <div class="table-choice-card" data-table="outpost">
+            <div class="table-card-title">1. Colônia Espacial</div>
+            <div class="table-card-desc">Construa o espaçoporto, ative o laboratório e complete o Super Glide.</div>
+          </div>
+          <div class="table-choice-card" data-table="command_post">
+            <div class="table-card-title">2. Posto de Comando</div>
+            <div class="table-card-desc">Defenda o posto tático militar com reparos, suprimentos e alerta vermelho.</div>
+          </div>
+          <div class="table-choice-card" data-table="mine">
+            <div class="table-card-title">3. Mina de Cristais</div>
+            <div class="table-card-desc">Detone as cavernas para extrair minérios e ative o Multi-Ball das 3 Esferas.</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-dialog btn-dialog-close">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Controls Modal -->
+  <div class="modal-overlay" id="modal-controls">
+    <div class="modal-dialog">
+      <div class="win-title-bar">
+        <span id="modal-title-controls">Manual de Controles</span>
+        <button class="win-btn modal-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <p><strong id="ctrl-flippers-label">Flippers:</strong> <span id="ctrl-flippers-desc">Left Shift / Right Shift ou Z / /</span></p>
+        <p style="margin-top: 6px;"><strong id="ctrl-plunger-label">Lançador (Plunger):</strong> <span id="ctrl-plunger-desc">Segure e solte a Barra de Espaço ou Seta para Baixo</span></p>
+        <p style="margin-top: 6px;"><strong id="ctrl-nudge-label">Empurrão (Nudge / Tilt):</strong> <span id="ctrl-nudge-desc">X / S / C ou Setas Esquerda / Cima / Direita</span></p>
+        <p style="margin-top: 6px;"><strong id="ctrl-pause-label">Pausa & Novo Jogo:</strong> <span id="ctrl-pause-desc">P para Pausar, F2 para Novo Jogo, 1-3 para Trocar Mesa</span></p>
+        <p style="margin-top: 6px;"><strong>Dispositivos Móveis:</strong> Toque nos botões na parte inferior da tela para rebatedores e mola.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-dialog btn-dialog-close">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Credits Modal -->
+  <div class="modal-overlay" id="modal-credits">
+    <div class="modal-dialog">
+      <div class="win-title-bar">
+        <span id="modal-title-credits">Créditos de Produção</span>
+        <button class="win-btn modal-close">✕</button>
+      </div>
+      <div class="modal-body" style="font-family: monospace; font-size: 11px;">
+        <p style="text-align: center; font-weight: bold; margin-bottom: 8px;">3-D ULTRA PINBALL (1995)</p>
+        <p><strong>Desenvolvimento Original:</strong> Dynamix / Sierra On-Line</p>
+        <p><strong>Designers & Programadores Originais:</strong> Randy Dersham, Mark Reider, Kurt Peters, Rich Carpenter, Allan Roberts</p>
+        <p><strong>Áudio & Trilha Sonora:</strong> SOS9502 HMI Sound Operating System, Neal Grandstaff</p>
+        <hr style="margin: 10px 0; border: none; border-top: 1px solid #808080;">
+        <p><strong>Engenharia Reversa & Port Web Moderno:</strong> Pedro Ivo Rocha (pedryvo)</p>
+        <p><strong>Tecnologias:</strong> WebAssembly, TypeScript, HTML5 Canvas, Web Audio API, Vite</p>
+        <p><strong>Licença:</strong> GPL-3.0-or-later</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-dialog btn-dialog-close">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

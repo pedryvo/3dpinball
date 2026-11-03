@@ -7,7 +7,7 @@
 [![TypeScript](https://img.shields.io/badge/typescript-5.5-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![WebAssembly](https://img.shields.io/badge/webassembly-physics_core-654ff0?logo=webassembly&logoColor=white)](https://webassembly.org/)
 [![Status](https://img.shields.io/badge/status-jog%C3%A1vel-success)](#-progresso)
-[![Fase](https://img.shields.io/badge/fase-1_%E2%80%94_engenharia_reversa_%26_base-blue)](docs/PLAN.md)
+[![Fase](https://img.shields.io/badge/fase-6_%E2%80%94_pronto_para_produ%C3%A7%C3%A3o-success)](docs/PLAN.md)
 [![Plataformas](https://img.shields.io/badge/plataformas-Web_%7C_Vercel_%7C_Mobile-lightgrey)](#-como-jogar)
 [![Licença: GPL-3.0](https://img.shields.io/badge/licen%C3%A7a-GPL--3.0--or--later-blue)](LICENSE)
 
@@ -41,13 +41,13 @@ Diferente de emuladores x86 pesados no navegador, este porte roda nativamente em
 |---|:---:|---|
 | **Plano e Arquitetura** | ✅ | Roteiro completo de desenvolvimento e marcos · [`docs/PLAN.md`](docs/PLAN.md) |
 | **Engenharia Reversa (REA)** | ✅ | Análise PE do `PINBALL.EXE` (`4e675a78ba3a...`), exports, RTTI e extrator Clickteam · [`re/binary_analysis.json`](re/binary_analysis.json) |
-| **Leitor `RESOURCE.MAP` / Assets** | 🟡 | Parser binário de `.BMP`, `.PAL`, `.ANM`, `.ITF`, `.WAV`, `.MID`, `.RES` · [especificação](docs/formats/resource_map.md) |
-| **Renderizador 256 Cores & Z-Buffer** | 🟡 | Mesa indexada em 8 bits, alvos animados, flippers, rampas e painel LED |
-| **Núcleo de Física WebAssembly** | 🟡 | Colisão em sub-passos (`PB_COL`), rampas spline (`PB_SPLIN`), flippers, kickers e tilt |
-| **Motor de Áudio** | 🟡 | Web Audio API para efeitos sonoros e sintetizador musical com pan estéreo · [especificação](docs/formats/sound.md) |
-| **3 Mesas Jogáveis** | 🟡 | Progressão entre **Colônia**, **Posto de Comando** e **Mina**, mini-objetivos e multiball |
-| **Interface Nativa HTML5** | 🟡 | Janela Windows 95 / Colônia Espacial, menus, seletor de mesas, preferências e recordes |
-| **Controles Touch Mobile** | 🟡 | Botões de Flipper Esquerdo/Direito, barra de lançamento e Nudge na tela |
+| **Leitor `RESOURCE.MAP` / Assets** | ✅ | Parser binário de `.BMP`, `.PAL`, `.ANM`, `.ITF`, `.WAV`, `.MID`, `.RES` · [especificação](docs/formats/resource_map.md) |
+| **Renderizador 256 Cores & Z-Buffer** | ✅ | Mesa indexada em 8 bits, alvos animados, flippers, rampas e painel LED |
+| **Núcleo de Física WebAssembly** | ✅ | Colisão em sub-passos (`PB_COL`), rampas spline (`PB_SPLIN`), flippers, kickers e tilt |
+| **Motor de Áudio** | ✅ | Web Audio API para efeitos sonoros e sintetizador musical com pan estéreo · [especificação](docs/formats/sound.md) |
+| **3 Mesas Jogáveis** | ✅ | Progressão entre **Colônia**, **Posto de Comando** e **Mina**, mini-objetivos e multiball |
+| **Interface Nativa HTML5** | ✅ | Janela Windows 95 / Colônia Espacial, menus, seletor de mesas, preferências e recordes |
+| **Controles Touch Mobile** | ✅ | Botões de Flipper Esquerdo/Direito, barra de lançamento e Nudge na tela |
 | **Localização (i18n)** | ✅ | 6 idiomas completos: PT-BR, EN, ES, RU, ZH-CN, DE |
 | **Pronto para Vercel & PWA** | ✅ | Build estático otimizado com cabeçalhos de cache (`vercel.json`) |
 

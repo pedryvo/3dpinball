@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "test": "node tests/regressions.mjs"
+    "test": "tsx tests/regressions.mjs"
   },
   "repository": {
     "type": "git",
@@ -28,6 +28,7 @@
   "author": "pedryvo",
   "license": "GPL-3.0-or-later",
   "devDependencies": {
+    "tsx": "^4.23.15",
     "typescript": "^5.5.0",
     "vite": "^5.4.0"
   }
