@@ -225,10 +225,18 @@ window.addEventListener('DOMContentLoaded', async () => {
     for (const ev of events) {
       if (ev.type === 'sound' && ev.sound) {
         audio.playSound(ev.sound, ev.panX ?? 246);
-        if (ev.sound.includes('ZAP') || ev.sound.includes('EXPLO')) {
+        const px = ev.panX ?? 240;
+        if (ev.sound.includes('ZAP')) {
           gamepad.triggerHaptic(0.6, 120);
+          renderer.particles.emitRingBurst(px, 140, '#00ffff', 20);
+        } else if (ev.sound.includes('EXPLO')) {
+          gamepad.triggerHaptic(0.7, 180);
+          renderer.particles.emitSparks(px, 150, '#ff4400', 25, 200);
+        } else if (ev.sound.includes('SCORE') || ev.sound.includes('CRYSTAL')) {
+          renderer.particles.emitSparks(px, 160, '#ffea00', 14, 120);
         } else if (ev.sound.includes('KACHUNK') || ev.sound.includes('FLIPPER')) {
           gamepad.triggerHaptic(0.35, 60);
+          renderer.particles.emitSparks(px, 340, '#ff8800', 8, 80);
         }
       } else if (ev.type === 'banner' && ev.bannerKey) {
         const dict = i18n.t;

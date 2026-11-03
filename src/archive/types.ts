@@ -32,3 +32,16 @@ export interface DynamixTableMap {
   appHeaderSize: number;
   datPayloadSize: number;
 }
+
+export interface DynamixAnimationFrame {
+  frameIndex: number;
+  durationMs: number;
+  xOffset: number;
+  yOffset: number;
+}
+
+export interface DynamixAnimation {
+  name: string;
+  frameCount: number;
+  frames: DynamixAnimationFrame[];
+}

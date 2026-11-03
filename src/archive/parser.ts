@@ -1,4 +1,6 @@
 import type {
+  DynamixAnimation,
+  DynamixAnimationFrame,
   DynamixBitmap,
   DynamixBitmapFrame,
   DynamixPalette,
@@ -150,6 +152,47 @@ export function parseDynamixTableMap(buffer: ArrayBuffer | Uint8Array): DynamixT
     identifiers,
     appHeaderSize,
     datPayloadSize,
+  };
+}
+
+/**
+ * Parses a Dynamix "ANM:" chunk from RESOURCE.001
+ */
+export function parseDynamixAnimation(buffer: ArrayBuffer | Uint8Array): DynamixAnimation {
+  const bytes = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer);
+  const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+
+  const magic = String.fromCharCode(bytes[0], bytes[1], bytes[2], bytes[3]);
+  if (magic !== 'ANM:') {
+    throw new Error(`Invalid Dynamix animation magic: expected ANM:, got ${magic}`);
+  }
+
+  const chunkSize = view.getUint32(4, true);
+  const frameCount = bytes.byteLength >= 16 ? view.getUint16(14, true) : 1;
+  const frames: DynamixAnimationFrame[] = [];
+
+  // Parse keyframe descriptors (20 bytes each starting around offset 32)
+  let offset = 32;
+  for (let i = 0; i < frameCount && offset + 12 <= bytes.byteLength; i++) {
+    const xOffset = view.getUint16(offset, true);
+    const yOffset = view.getUint16(offset + 2, true);
+    const w = view.getUint16(offset + 4, true);
+    const h = view.getUint16(offset + 6, true);
+    const spriteIdx = view.getUint16(offset + 8, true);
+
+    frames.push({
+      frameIndex: spriteIdx,
+      durationMs: 80,
+      xOffset,
+      yOffset,
+    });
+    offset += 16;
+  }
+
+  return {
+    name: 'sprite_anim',
+    frameCount: frames.length,
+    frames,
   };
 }
 

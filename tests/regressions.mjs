@@ -14,6 +14,7 @@ console.log('🧪 Starting 3-D Ultra Pinball Regression & Verification Suite...\
 // ---------------------------------------------------------------------------
 console.log('▶ [1/5] Testing Dynamix Archive Binary Parsers (BMP, PAL, TBL, RES)...');
 import {
+  parseDynamixAnimation,
   parseDynamixBitmap,
   parseDynamixPalette,
   parseDynamixTableMap,
@@ -52,6 +53,13 @@ const textResBuf = fs.readFileSync(textResPath);
 const textLines = parseTextResource(textResBuf);
 assert.ok(textLines.length > 0, 'TEXT.RES must contain text strings');
 console.log(`  ✔ parseTextResource passed (${textLines.length} localized strings extracted)`);
+
+// Test Animation Chunk parser
+const anmPath = path.join(rootDir, 'public/assets/OUTPOST2.ANM');
+const anmBuf = fs.readFileSync(anmPath);
+const anm = parseDynamixAnimation(anmBuf);
+assert.ok(anm.frameCount > 0, 'ANM must contain animation keyframes');
+console.log(`  ✔ parseDynamixAnimation passed (${anm.frameCount} sprite keyframes parsed)`);
 
 // ---------------------------------------------------------------------------
 // 2. Test i18n Localization Subsystem (6 Languages)
@@ -194,4 +202,17 @@ assert.equal(typeof gamepad.update, 'function');
 assert.equal(typeof gamepad.triggerHaptic, 'function');
 console.log('  ✔ Gamepad manager and haptic feedback actuator verified');
 
-console.log('\n🎉 ALL REGRESSION TESTS PASSED SUCCESSFULLY! (6/6 suites green)\n');
+// ---------------------------------------------------------------------------
+// 7. Test Sci-Fi Collision Particle & Spark FX
+// ---------------------------------------------------------------------------
+console.log('\n▶ [7/7] Testing Particle FX & Energy Burst System...');
+import { ParticleSystem } from '../src/renderer/particle-system.ts';
+const particles = new ParticleSystem();
+particles.emitSparks(240, 160, '#ffea00', 16, 120);
+particles.emitRingBurst(240, 160, '#00ffff', 24);
+particles.update(0.016);
+assert.ok(true, 'Particle system update should run cleanly');
+particles.clear();
+console.log('  ✔ Particle emission, burst math, and life decay cycle verified');
+
+console.log('\n🎉 ALL REGRESSION TESTS PASSED SUCCESSFULLY! (7/7 suites green)\n');

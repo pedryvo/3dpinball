@@ -2,14 +2,18 @@ import { parseDynamixBitmap, parseDynamixPalette } from '../archive/parser';
 import { getTableTranslation, i18n } from '../i18n';
 import type { TableId } from '../i18n/types';
 import type { FlipperState, PinballBall, PinballSimulation } from '../physics/engine';
+import { ParticleSystem } from './particle-system';
 
 export class TableRenderer {
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
   private tableCanvases = new Map<TableId, HTMLCanvasElement>();
+  private animatedSpriteFrames = new Map<TableId, HTMLCanvasElement[]>();
   private bannerText = '';
   private bannerTimer = 0;
   private marqueeOffset = 0;
+  private animTimer = 0;
+  public particles = new ParticleSystem();
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
@@ -20,18 +24,19 @@ export class TableRenderer {
   }
 
   public async preloadTableAssets(): Promise<void> {
-    const tableConfigs: Array<{ id: TableId; bmp: string; pal: string }> = [
-      { id: 'outpost', bmp: '/assets/OUTPOSTJ.BMP', pal: '/assets/OUTPOST.PAL' },
-      { id: 'command_post', bmp: '/assets/CPJ.BMP', pal: '/assets/CP.PAL' },
-      { id: 'mine', bmp: '/assets/MINEJ.BMP', pal: '/assets/MINE.PAL' },
+    const tableConfigs: Array<{ id: TableId; bmp: string; pal: string; animBmp: string }> = [
+      { id: 'outpost', bmp: '/assets/OUTPOSTJ.BMP', pal: '/assets/OUTPOST.PAL', animBmp: '/assets/OUTPOST2.BMP' },
+      { id: 'command_post', bmp: '/assets/CPJ.BMP', pal: '/assets/CP.PAL', animBmp: '/assets/CP2.BMP' },
+      { id: 'mine', bmp: '/assets/MINEJ.BMP', pal: '/assets/MINE.PAL', animBmp: '/assets/MINE2.BMP' },
     ];
 
     await Promise.all(
       tableConfigs.map(async (cfg) => {
         try {
-          const [bmpRes, palRes] = await Promise.all([
+          const [bmpRes, palRes, animRes] = await Promise.all([
             fetch(cfg.bmp),
             fetch(cfg.pal),
+            fetch(cfg.animBmp).catch(() => null),
           ]);
           if (!bmpRes.ok || !palRes.ok) return;
 
@@ -59,6 +64,40 @@ export class TableRenderer {
               }
               offCtx.putImageData(imgData, 0, 0);
               this.tableCanvases.set(cfg.id, offscreen);
+            }
+          }
+
+          // Preload animation frames
+          if (animRes && animRes.ok) {
+            const animBuf = await animRes.arrayBuffer();
+            const animBmp = parseDynamixBitmap(animBuf);
+            const frames: HTMLCanvasElement[] = [];
+
+            for (const f of animBmp.frames) {
+              const fCanvas = document.createElement('canvas');
+              fCanvas.width = f.width;
+              fCanvas.height = f.height;
+              const fCtx = fCanvas.getContext('2d');
+              if (fCtx) {
+                const imgData = fCtx.createImageData(f.width, f.height);
+                const data32 = new Uint32Array(imgData.data.buffer);
+                const pix = f.pixels;
+                const len = Math.min(pix.length, data32.length);
+                for (let i = 0; i < len; i++) {
+                  const colorIdx = pix[i];
+                  // If color index is 0, make it transparent
+                  if (colorIdx === 0) {
+                    data32[i] = 0x00000000;
+                  } else {
+                    data32[i] = palette.rgba32[colorIdx];
+                  }
+                }
+                fCtx.putImageData(imgData, 0, 0);
+                frames.push(fCanvas);
+              }
+            }
+            if (frames.length > 0) {
+              this.animatedSpriteFrames.set(cfg.id, frames);
             }
           }
         } catch {
@@ -94,6 +133,19 @@ export class TableRenderer {
       this.renderProceduralTableBackdrop(sim);
     }
 
+    // 1.5 Draw Authentic Animated Table Sprites (Radar, Scanner, Extraction Gear)
+    this.animTimer += dt;
+    const animFrames = this.animatedSpriteFrames.get(sim.tableId);
+    if (animFrames && animFrames.length > 0) {
+      const frameIdx = Math.floor((this.animTimer * 10) % animFrames.length);
+      const spriteCanvas = animFrames[frameIdx];
+      if (spriteCanvas) {
+        const posX = sim.tableId === 'outpost' ? 218 : (sim.tableId === 'command_post' ? 222 : 216);
+        const posY = 100;
+        ctx.drawImage(spriteCanvas, posX, posY);
+      }
+    }
+
     // 2. Draw Table Wire Ramps & Habitrail Guide Rails
     this.renderRamps(sim);
 
@@ -121,12 +173,16 @@ export class TableRenderer {
       }
     }
 
-    // 9. Draw Tilt Overlay
+    // 9. Update & Draw Sci-Fi Collision Particles & Energy Sparks
+    this.particles.update(dt);
+    this.particles.render(ctx);
+
+    // 10. Draw Tilt Overlay
     if (sim.tilted) {
       this.renderTiltWarning();
     }
 
-    // 10. Draw Sierra / Dynamix LED Scoreboard HUD
+    // 11. Draw Sierra / Dynamix LED Scoreboard HUD
     this.renderScoreboard(sim);
 
     ctx.restore();

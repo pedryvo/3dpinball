@@ -120,3 +120,36 @@ Este documento registra detalhadamente todas as etapas de desenvolvimento, decis
 
 ### 12. Sincronização da Documentação Multilíngue
 - Atualização de todas as 6 versões dos READMEs (`README.md`, `README.pt-BR.md`, `README.es.md`, `README.de.md`, `README.zh-CN.md`, `README.ru.md`) com badges de fase 6 e tabelas de progresso 100% concluídas.
+
+---
+
+### 13. Sistema de Partículas & Efeitos Sci-Fi (`src/renderer/particle-system.ts`)
+- **Objetivo:** Renderizar faíscas de energia neon e explosões de choque em impactos de bumpers, alvos e kickers.
+- **Implementação:**
+  - `emitSparks()`: dispersão radial de fagulhas com gravidade e decaimento exponencial de opacidade.
+  - `emitRingBurst()`: anel de plasma expansivo para impactos nos para-choques de alta pontuação e laser zaps.
+  - Mistura aditiva (`globalCompositeOperation = 'lighter'`) para iluminação sci-fi autêntica no canvas.
+
+---
+
+### 14. Animação de Elementos de Mesa via Chunks `.ANM` (`src/archive/parser.ts`)
+- **Objetivo:** Decodificar e animar os elementos móveis originais da Dynamix:
+  - `parseDynamixAnimation()`: decodificador binário de estruturas `"ANM:"` com keyframes e offsets.
+  - Pré-carregamento dos spritesheets (`OUTPOST2.BMP` com 18 quadros, `CP2.BMP` com 24 quadros, `MINE2.BMP` com 20 quadros).
+  - Exibição com remoção automática de cor de fundo (índice 0 transparente) a 10 FPS sobre o playfield.
+
+---
+
+### 15. Caixa de Diálogo de Registro de Novo Recorde (`modal-score-entry`)
+- **Objetivo:** Permitir ao jogador digitar seu indicativo de chamada / iniciais (até 12 caracteres) ao alcançar um recorde entre os 5 melhores.
+- **Implementação:**
+  - `promptHighScoreEntry()`: acionado no final da partida (Game Over) se a pontuação for elegível.
+  - Campo de entrada com foco automático e tecla Enter para envio rápido.
+  - Ordenação e persistência imediata em `localStorage`.
+
+---
+
+### 16. Painel de Preferências Funcional (`modal-prefs` & `PBPREFS.CFG`)
+- **Objetivo:** Permitir ajuste fino em tempo real de:
+  - Sliders de Volume Geral, Efeitos (SFX) e Música Espacial.
+  - Toggles para ativação de rastros de bola (Motion Trails) e partículas de colisão.

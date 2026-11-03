@@ -301,4 +301,24 @@ export class AudioManager {
   public setMasterVolume(vol: number): void {
     this.masterVolume = Math.max(0, Math.min(1, vol));
   }
+
+  public setSfxVolume(vol: number): void {
+    this.sfxVolume = Math.max(0, Math.min(1, vol));
+  }
+
+  public setMusicVolume(vol: number): void {
+    this.musicVolume = Math.max(0, Math.min(1, vol));
+  }
+
+  public getMasterVolume(): number {
+    return this.masterVolume;
+  }
+
+  public getSfxVolume(): number {
+    return this.sfxVolume;
+  }
+
+  public getMusicVolume(): number {
+    return this.musicVolume;
+  }
 }

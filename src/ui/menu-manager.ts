@@ -18,6 +18,7 @@ export class MenuManager {
   private highScores: HighScoreEntry[] = [];
   private activeDropdown: string | null = null;
   private onTableSelected?: (id: TableId) => void;
+  private pendingHighScore: { score: number; table: TableId } | null = null;
 
   constructor(sim: PinballSimulation, audio: AudioManager, onTableSelected?: (id: TableId) => void) {
     this.sim = sim;
@@ -56,22 +57,45 @@ export class MenuManager {
   }
 
   public recordScoreIfEligible(score: number, table: TableId): boolean {
+    return this.promptHighScoreEntry(score, table);
+  }
+
+  public promptHighScoreEntry(score: number, table: TableId): boolean {
     if (score <= 0) return false;
     const lowest = this.highScores[this.highScores.length - 1]?.score ?? 0;
     if (this.highScores.length < 5 || score > lowest) {
-      const entry: HighScoreEntry = {
-        name: 'PLAYER 1',
-        score,
-        table,
-        date: new Date().toISOString().split('T')[0],
-      };
-      this.highScores.push(entry);
-      this.highScores.sort((a, b) => b.score - a.score);
-      this.highScores = this.highScores.slice(0, 5);
-      this.saveHighScores();
+      this.pendingHighScore = { score, table };
+      const scoreVal = document.getElementById('entry-score-value');
+      if (scoreVal) scoreVal.textContent = score.toLocaleString();
+      this.openModal('modal-score-entry');
+      const input = document.getElementById('input-commander-name') as HTMLInputElement | null;
+      if (input) {
+        input.value = 'COMMANDER';
+        input.focus();
+        input.select();
+      }
       return true;
     }
     return false;
+  }
+
+  public savePendingHighScore(name: string): void {
+    if (!this.pendingHighScore) return;
+    const cleanName = (name.trim() || 'COMMANDER').toUpperCase().slice(0, 12);
+    const entry: HighScoreEntry = {
+      name: cleanName,
+      score: this.pendingHighScore.score,
+      table: this.pendingHighScore.table,
+      date: new Date().toISOString().split('T')[0],
+    };
+    this.highScores.push(entry);
+    this.highScores.sort((a, b) => b.score - a.score);
+    this.highScores = this.highScores.slice(0, 5);
+    this.saveHighScores();
+    this.pendingHighScore = null;
+    this.closeAllModals();
+    this.openModal('modal-scores');
+    this.renderHighScoresTable();
   }
 
   private saveHighScores(): void {
@@ -174,6 +198,9 @@ export class MenuManager {
         }
         break;
       }
+      case 'preferences':
+        this.openModal('modal-prefs');
+        break;
       case 'controls':
         this.openModal('modal-controls');
         break;
@@ -202,6 +229,41 @@ export class MenuManager {
         }
       });
     });
+
+    // High Score Entry submit
+    const btnSaveScore = document.getElementById('btn-save-score');
+    const inputCommanderName = document.getElementById('input-commander-name') as HTMLInputElement | null;
+    if (btnSaveScore && inputCommanderName) {
+      btnSaveScore.addEventListener('click', () => {
+        this.savePendingHighScore(inputCommanderName.value);
+      });
+      inputCommanderName.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          this.savePendingHighScore(inputCommanderName.value);
+        }
+      });
+    }
+
+    // Preferences sliders
+    const masterSlider = document.getElementById('pref-volume-master') as HTMLInputElement | null;
+    const sfxSlider = document.getElementById('pref-volume-sfx') as HTMLInputElement | null;
+    const musicSlider = document.getElementById('pref-volume-music') as HTMLInputElement | null;
+
+    if (masterSlider) {
+      masterSlider.addEventListener('input', () => {
+        this.audio.setMasterVolume(parseFloat(masterSlider.value) / 100);
+      });
+    }
+    if (sfxSlider) {
+      sfxSlider.addEventListener('input', () => {
+        this.audio.setSfxVolume(parseFloat(sfxSlider.value) / 100);
+      });
+    }
+    if (musicSlider) {
+      musicSlider.addEventListener('input', () => {
+        this.audio.setMusicVolume(parseFloat(musicSlider.value) / 100);
+      });
+    }
 
     // Table modal selections
     const tableCards = document.querySelectorAll<HTMLElement>('.table-choice-card');

@@ -484,6 +484,8 @@
         <div class="dropdown-item" data-action="toggle-sfx" data-checked="true" id="item-sfx">Efeitos Sonoros (SFX)</div>
         <div class="dropdown-item" data-action="toggle-music" data-checked="true" id="item-music">Música FM Sintetizada</div>
         <div class="dropdown-divider"></div>
+        <div class="dropdown-item" data-action="preferences" id="item-preferences">Preferências...</div>
+        <div class="dropdown-divider"></div>
         <div class="dropdown-item" data-action="fullscreen" id="item-fullscreen">Tela Cheia</div>
       </div>
 
@@ -546,6 +548,27 @@
     </div>
   </div>
 
+  <!-- High Score Entry Modal -->
+  <div class="modal-overlay" id="modal-score-entry">
+    <div class="modal-dialog" style="max-width: 380px;">
+      <div class="win-title-bar">
+        <span>Novo Recorde Registrado!</span>
+        <button class="win-btn modal-close">✕</button>
+      </div>
+      <div class="modal-body" style="text-align: center;">
+        <p style="font-size: 14px; font-weight: bold; color: #000080; margin-bottom: 8px;">PARABÉNS, PILOTO!</p>
+        <p>Você entrou para a Galeria dos Melhores com <strong id="entry-score-value" style="color: #d81b24;">0</strong> pontos!</p>
+        <div style="margin-top: 14px;">
+          <label style="display: block; font-weight: bold; margin-bottom: 6px;">Digite seu nome ou indicativo:</label>
+          <input type="text" id="input-commander-name" maxlength="12" value="COMMANDER" style="font-family: monospace; font-size: 14px; text-transform: uppercase; padding: 4px 8px; width: 180px; text-align: center; border: 2px solid #808080;" />
+        </div>
+      </div>
+      <div class="modal-footer" style="justify-content: center;">
+        <button class="btn-dialog" id="btn-save-score">Salvar Recorde</button>
+      </div>
+    </div>
+  </div>
+
   <!-- High Scores Modal -->
   <div class="modal-overlay" id="modal-scores">
     <div class="modal-dialog">
@@ -569,6 +592,46 @@
       </div>
       <div class="modal-footer">
         <button class="btn-dialog btn-dialog-close">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Preferences Modal -->
+  <div class="modal-overlay" id="modal-prefs">
+    <div class="modal-dialog" style="max-width: 420px;">
+      <div class="win-title-bar">
+        <span>Preferências (PBPREFS.CFG)</span>
+        <button class="win-btn modal-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <fieldset style="border: 1px solid #808080; padding: 10px; margin-bottom: 10px;">
+          <legend style="padding: 0 4px; font-weight: bold;">Controle de Volume</legend>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <label for="pref-volume-master">Volume Geral:</label>
+            <input type="range" id="pref-volume-master" min="0" max="100" value="80" style="width: 160px;" />
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <label for="pref-volume-sfx">Efeitos (SFX):</label>
+            <input type="range" id="pref-volume-sfx" min="0" max="100" value="90" style="width: 160px;" />
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <label for="pref-volume-music">Música Espacial:</label>
+            <input type="range" id="pref-volume-music" min="0" max="100" value="50" style="width: 160px;" />
+          </div>
+        </fieldset>
+
+        <fieldset style="border: 1px solid #808080; padding: 10px;">
+          <legend style="padding: 0 4px; font-weight: bold;">Efeitos Visuais & Física</legend>
+          <div style="margin-bottom: 6px;">
+            <label><input type="checkbox" id="pref-ball-trails" checked /> Rastro de Velocidade da Esfera (Trails)</label>
+          </div>
+          <div>
+            <label><input type="checkbox" id="pref-particles" checked /> Faíscas & Explosões de Energia (Particles)</label>
+          </div>
+        </fieldset>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-dialog btn-dialog-close">OK</button>
       </div>
     </div>
   </div>
