@@ -1,0 +1,34 @@
+{
+  "name": "3dpinball-web",
+  "version": "1.0.0",
+  "description": "3-D Ultra Pinball (1995 Dynamix / Sierra) ported to WebAssembly, HTML5 Canvas, TypeScript and Web Audio API",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "node tests/regressions.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pedryvo/3dpinball.git"
+  },
+  "keywords": [
+    "3d-ultra-pinball",
+    "pinball",
+    "sierra",
+    "dynamix",
+    "webassembly",
+    "html5",
+    "typescript",
+    "retro-gaming",
+    "reverse-engineering",
+    "vercel"
+  ],
+  "author": "pedryvo",
+  "license": "GPL-3.0-or-later",
+  "devDependencies": {
+    "typescript": "^5.5.0",
+    "vite": "^5.4.0"
+  }
+}
