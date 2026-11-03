@@ -1,4 +1,4 @@
-const CACHE_NAME = '3dpinball-cache-v1';
+const CACHE_NAME = '3dpinball-cache-v3';
 
 const STATIC_ASSETS = [
   '/',
@@ -31,12 +31,12 @@ const STATIC_ASSETS = [
 ];
 
 self.addEventListener('install', (e) => {
+  self.skipWaiting();
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(STATIC_ASSETS).catch(() => {});
     })
   );
-  self.skipWaiting();
 });
 
 self.addEventListener('activate', (e) => {
@@ -47,12 +47,28 @@ self.addEventListener('activate', (e) => {
           if (k !== CACHE_NAME) return caches.delete(k);
         })
       );
-    })
+    }).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
 self.addEventListener('fetch', (e) => {
+  // Network-First for document navigation and JS bundles so updates are immediate
+  if (e.request.mode === 'navigate' || e.request.url.includes('/index') || e.request.destination === 'document') {
+    e.respondWith(
+      fetch(e.request)
+        .then((resp) => {
+          if (resp && resp.status === 200) {
+            const clone = resp.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(e.request, clone));
+          }
+          return resp;
+        })
+        .catch(() => caches.match(e.request))
+    );
+    return;
+  }
+
+  // Cache-First for static assets (palettes, bitmaps, WAVs)
   e.respondWith(
     caches.match(e.request).then((cached) => {
       if (cached) return cached;
@@ -65,10 +81,7 @@ self.addEventListener('fetch', (e) => {
           cache.put(e.request, toCache);
         });
         return resp;
-      }).catch(() => {
-        // Offline fallback
-        return cached;
-      });
+      }).catch(() => cached);
     })
   );
 });
