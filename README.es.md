@@ -49,6 +49,7 @@ A diferencia de los pesados emuladores x86 en el navegador, este port se ejecuta
 | **Interfaz Nativa HTML5** | ✅ | Ventana Windows 95, menús desplegables, preferencias y récords |
 | **Controles Táctiles y Gamepad** | ✅ | Botones táctiles para móviles y soporte para mandos con vibración háptica |
 | **Localización (i18n)** | ✅ | 6 idiomas completos: PT-BR, EN, ES, RU, ZH-CN, DE |
+| **Regresiones Automatizadas** | ✅ | 10 suites completas de pruebas automatizadas (`npm test`) |
 | **PWA & Listo para Vercel** | ✅ | Service worker para juego offline y build estático optimizado (`vercel.json`) |
 
 ---

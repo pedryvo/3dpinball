@@ -49,6 +49,9 @@ Unlike heavyweight x86 emulators, this port runs natively in TypeScript, WebAsse
 | **HTML5 Native UI** | ✅ | Windows 95 / Space Outpost chrome, menu dropdowns, table picker, preferences, and high scores |
 | **Mobile Touch Controls** | ✅ | On-screen Left/Right Flippers, Plunger launch bar, and Nudge buttons for iOS & Android |
 | **Localization (i18n)** | ✅ | 6 full languages supported: PT-BR, EN, ES, RU, ZH-CN, DE |
+| **Gamepad & Dual-Rumble** | ✅ | Native Gamepad API controller support with dual-rumble haptic feedback |
+| **PWA & Offline Play** | ✅ | Progressive Web App manifest and Cache-First Service Worker for 100% offline gameplay |
+| **Automated Regressions** | ✅ | 10 full test suites covering binary parsers, WASM, multiball, bitmaps, and physics (`npm test`) |
 | **Vercel & PWA Ready** | ✅ | Optimized static build with edge caching headers (`vercel.json`) |
 
 ---

@@ -49,6 +49,9 @@ Diferente de emuladores x86 pesados no navegador, este porte roda nativamente em
 | **Interface Nativa HTML5** | ✅ | Janela Windows 95 / Colônia Espacial, menus, seletor de mesas, preferências e recordes |
 | **Controles Touch Mobile** | ✅ | Botões de Flipper Esquerdo/Direito, barra de lançamento e Nudge na tela |
 | **Localização (i18n)** | ✅ | 6 idiomas completos: PT-BR, EN, ES, RU, ZH-CN, DE |
+| **Gamepad & Dual-Rumble** | ✅ | Suporte nativo a gamepads com vibração háptica dual-rumble |
+| **PWA & Modo Offline** | ✅ | Manifesto Progressive Web App e Service Worker Cache-First para jogo 100% offline |
+| **Regressões Automatizadas** | ✅ | 10 suítes de testes completas cobrindo parsers binários, WASM, multiball, bitmaps e física (`npm test`) |
 | **Pronto para Vercel & PWA** | ✅ | Build estático otimizado com cabeçalhos de cache (`vercel.json`) |
 
 ---

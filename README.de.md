@@ -49,6 +49,7 @@ Im Gegensatz zu schwerfälligen x86-Emulatoren läuft dieser Port nativ in TypeS
 | **HTML5-Benutzeroberfläche** | ✅ | Windows-95-Fenster, Dropdown-Menüs, Einstellungen und Highscores |
 | **Touch-Steuerung & Gamepad** | ✅ | Touch-Tasten für Mobilgeräte und Gamepad-Unterstützung mit haptischem Feedback |
 | **Lokalisierung (i18n)** | ✅ | 6 vollständige Sprachen: PT-BR, EN, ES, RU, ZH-CN, DE |
+| **Automatisierte Regressionstests** | ✅ | 10 vollständige Testsuiten (`npm test`) |
 | **PWA & Vercel-Bereitstellung** | ✅ | Service Worker für Offline-Betrieb und optimierter Build (`vercel.json`) |
 
 ---
