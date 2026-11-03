@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>3-D Ultra Pinball (Dynamix / Sierra 1995)</title>
   <meta name="description" content="Port Web (WebAssembly, TypeScript, HTML5 Canvas, Web Audio API) do clássico 3-D Ultra Pinball da Dynamix e Sierra de 1995.">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#000080">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23e02020'/><polygon points='35,25 75,50 35,75' fill='%23ffffff'/></svg>">
   <style>
     :root {
@@ -644,5 +646,12 @@
   </div>
 
   <script type="module" src="/src/main.ts"></script>
+  <script>
+    if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      });
+    }
+  </script>
 </body>
 </html>

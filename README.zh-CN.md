@@ -7,7 +7,7 @@
 [![TypeScript](https://img.shields.io/badge/typescript-5.5-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![WebAssembly](https://img.shields.io/badge/webassembly-physics_core-654ff0?logo=webassembly&logoColor=white)](https://webassembly.org/)
 [![Status](https://img.shields.io/badge/status-%E5%8F%AF%E6%B8%B8%E7%8E%A9-success)](#-开发进度)
-[![Phase](https://img.shields.io/badge/phase-1_%E2%80%94_%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E4%B8%8E%E5%9F%BA%E7%A1%80-blue)](docs/PLAN.md)
+[![Phase](https://img.shields.io/badge/phase-6_%E2%80%94_%E5%B7%B2%E5%AE%8C%E6%88%90%E5%8F%AF%E6%8A%95%E4%BA%A7-success)](docs/PLAN.md)
 [![Platforms](https://img.shields.io/badge/platforms-Web_%7C_Vercel_%7C_Mobile-lightgrey)](#-运行游戏)
 [![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)](LICENSE)
 
@@ -32,6 +32,24 @@ _1995 年 Dynamix / Sierra 太空基地经典弹珠台游戏，<br>经过逆向�
 - 🔊 **Web Audio API 音效与合成音乐**：直接播放原版 PCM `.WAV` 音效与 FM/MIDI 合成背景音乐。
 - 🌍 **完整的 6 语言本地化（i18n）**：自动识别用户系统语言（**巴西葡萄牙语**、**英语**、**西班牙语**、**俄语**、**简体中文**、**德语**），支持实时无缝切换。
 - ⚡ **一键部署至 Vercel**：极速 Vite 构建，随时发布至 Vercel 等现代静态托管平台。
+
+---
+
+## 📊 开发进度
+
+| 模块 | 状态 | 说明 |
+|---|:---:|---|
+| **计划与架构** | ✅ | 完整项目路线图 · [`docs/PLAN.md`](docs/PLAN.md) |
+| **REA 逆向工程** | ✅ | `PINBALL.EXE` PE 分析与 Clickteam 安装包解压 · [`re/binary_analysis.json`](re/binary_analysis.json) |
+| **`RESOURCE.MAP` / 资源解析器** | ✅ | 支持 `.BMP`、`.PAL`、`.ANM`、`.ITF`、`.WAV`、`.MID`、`.RES` · [规范](docs/formats/resource_map.md) |
+| **256 色渲染器与 Z-Buffer** | ✅ | 8 位索引台面、动画缓冲器、挡板、轨道与 LED 点阵计分屏 |
+| **WebAssembly 物理核心** | ✅ | 480Hz 高频子步长碰撞（`PB_COL`）、贝塞尔样条（`PB_SPLIN`）与倾斜检测 |
+| **音频引擎** | ✅ | Web Audio API 立体声声相音效与 FM 空间合成背景乐 · [规范](docs/formats/sound.md) |
+| **3 张可玩弹珠台** | ✅ | **殖民地**、**指挥所**与**矿场**任务进阶与多球模式（Multiball） |
+| **HTML5 原生用户界面** | ✅ | Windows 95 复古窗口边框、下拉菜单、首选项与高分榜 |
+| **触控与手柄控制** | ✅ | 移动端触屏按键，并完整支持带触觉震动反馈的游戏手柄 |
+| **多语言本地化 (i18n)** | ✅ | 完整支持 6 种语言：PT-BR、EN、ES、RU、ZH-CN、DE |
+| **PWA 与 Vercel 部署** | ✅ | 支持离线离网游玩 Service Worker 与优化静态构建 (`vercel.json`) |
 
 ---
 

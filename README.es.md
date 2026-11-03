@@ -7,7 +7,7 @@
 [![TypeScript](https://img.shields.io/badge/typescript-5.5-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![WebAssembly](https://img.shields.io/badge/webassembly-physics_core-654ff0?logo=webassembly&logoColor=white)](https://webassembly.org/)
 [![Estado](https://img.shields.io/badge/estado-jugable-success)](#-progreso)
-[![Fase](https://img.shields.io/badge/fase-1_%E2%80%94_ingenier%C3%ADa_inversa_%26_base-blue)](docs/PLAN.md)
+[![Fase](https://img.shields.io/badge/fase-6_%E2%80%94_listo_para_producci%C3%B3n-success)](docs/PLAN.md)
 [![Plataformas](https://img.shields.io/badge/plataformas-Web_%7C_Vercel_%7C_M%C3%B3vil-lightgrey)](#-c%C3%B3mo-jugar)
 [![Licencia: GPL-3.0](https://img.shields.io/badge/licencia-GPL--3.0--or--later-blue)](LICENSE)
 
@@ -32,6 +32,24 @@ A diferencia de los pesados emuladores x86 en el navegador, este port se ejecuta
 - 🔊 **Sonido y Sintetizador vía Web Audio API**: Reproducción de efectos de sonido PCM `.WAV` (`SX_%04d.WAV`) y pistas sintetizadas FM/MIDI (`SX_%04d.MID`) mediante Web Audio API.
 - 🌍 **Localización Completa en 6 Idiomas (i18n)**: Se inicia automáticamente en el idioma regional del usuario (**Portugués de Brasil**, **Inglés**, **Español**, **Ruso**, **Chino Simplificado** y **Alemán**) con cambio en tiempo real.
 - ⚡ **Listo para Despliegue en Vercel**: Compilación ultrarrápida con Vite lista para publicar en Vercel.
+
+---
+
+## 📊 Progreso
+
+| Área | Estado | Detalles |
+|---|:---:|---|
+| **Plan y Arquitectura** | ✅ | Hoja de ruta completa · [`docs/PLAN.md`](docs/PLAN.md) |
+| **Ingeniería Inversa (REA)** | ✅ | Análisis PE de `PINBALL.EXE` y descompresión Clickteam · [`re/binary_analysis.json`](re/binary_analysis.json) |
+| **Lector `RESOURCE.MAP` / Assets** | ✅ | Parser binario de `.BMP`, `.PAL`, `.ANM`, `.ITF`, `.WAV`, `.MID`, `.RES` · [especificación](docs/formats/resource_map.md) |
+| **Renderizador 256 Colores & Z-Buffer** | ✅ | Mesa indexada de 8 bits, dianas animadas, flippers, rampas y panel LED |
+| **Núcleo de Física WebAssembly** | ✅ | Colisión en sub-pasos a 480Hz (`PB_COL`), splines Bezier (`PB_SPLIN`) y tilt |
+| **Motor de Audio** | ✅ | Web Audio API para efectos de sonido con paneo estéreo y sintetizador FM · [especificación](docs/formats/sound.md) |
+| **3 Mesas Jugables** | ✅ | **Colonia**, **Puesto de Mando** y **Mina**, mini-objetivos y multiball |
+| **Interfaz Nativa HTML5** | ✅ | Ventana Windows 95, menús desplegables, preferencias y récords |
+| **Controles Táctiles y Gamepad** | ✅ | Botones táctiles para móviles y soporte para mandos con vibración háptica |
+| **Localización (i18n)** | ✅ | 6 idiomas completos: PT-BR, EN, ES, RU, ZH-CN, DE |
+| **PWA & Listo para Vercel** | ✅ | Service worker para juego offline y build estático optimizado (`vercel.json`) |
 
 ---
 

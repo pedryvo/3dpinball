@@ -7,7 +7,7 @@
 [![TypeScript](https://img.shields.io/badge/typescript-5.5-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![WebAssembly](https://img.shields.io/badge/webassembly-physics_core-654ff0?logo=webassembly&logoColor=white)](https://webassembly.org/)
 [![Status](https://img.shields.io/badge/status-spielbar-success)](#-fortschritt)
-[![Phase](https://img.shields.io/badge/phase-1_%E2%80%94_reverse_engineering_%26_basis-blue)](docs/PLAN.md)
+[![Phase](https://img.shields.io/badge/phase-6_%E2%80%94_produktionsbereit-success)](docs/PLAN.md)
 [![Plattformen](https://img.shields.io/badge/plattformen-Web_%7C_Vercel_%7C_Mobil-lightgrey)](#-spiel-starten)
 [![Lizenz: GPL-3.0](https://img.shields.io/badge/lizenz-GPL--3.0--or--later-blue)](LICENSE)
 
@@ -32,6 +32,24 @@ Im Gegensatz zu schwerfälligen x86-Emulatoren läuft dieser Port nativ in TypeS
 - 🔊 **Web Audio API Sound & Synthesizer-Musik**: Direkte Wiedergabe von PCM-`.WAV`-Soundeffekten (`SX_%04d.WAV`) und FM/MIDI-Soundtracks (`SX_%04d.MID`).
 - 🌍 **Vollständige Lokalisierung in 6 Sprachen (i18n)**: Unterstützt **Brasilianisches Portugiesisch**, **Englisch**, **Spanisch**, **Russisch**, **Vereinfachtes Chinesisch** und **Deutsch** mit Live-Sprachwechsel.
 - ⚡ **Bereit für Vercel**: Ultraschneller Vite-Build für statisches Hosting auf Vercel.
+
+---
+
+## 📊 Fortschritt
+
+| Bereich | Status | Details |
+|---|:---:|---|
+| **Plan & Architektur** | ✅ | Vollständige Roadmap · [`docs/PLAN.md`](docs/PLAN.md) |
+| **Reverse Engineering (REA)** | ✅ | PE-Analyse von `PINBALL.EXE` und Clickteam-Dekomprimierung · [`re/binary_analysis.json`](re/binary_analysis.json) |
+| **`RESOURCE.MAP` / Asset-Parser** | ✅ | Binärer Parser für `.BMP`, `.PAL`, `.ANM`, `.ITF`, `.WAV`, `.MID`, `.RES` · [Spezifikation](docs/formats/resource_map.md) |
+| **256-Farben-Renderer & Z-Buffer** | ✅ | 8-Bit-Spielfeld, animierte Bumper, Flipper, Rampen und LED-Anzeige |
+| **WebAssembly-Physikkern** | ✅ | 480Hz-Sub-Step-Simulation (`PB_COL`), Bezier-Splines (`PB_SPLIN`) und Tilt |
+| **Audio-Engine** | ✅ | Web Audio API für Soundeffekte mit Stereo-Panning und FM-Synthesizer · [Spezifikation](docs/formats/sound.md) |
+| **3 Spielbare Tische** | ✅ | **Kolonie**, **Kommandoposten** und **Mine**, Mini-Ziele und Multiball |
+| **HTML5-Benutzeroberfläche** | ✅ | Windows-95-Fenster, Dropdown-Menüs, Einstellungen und Highscores |
+| **Touch-Steuerung & Gamepad** | ✅ | Touch-Tasten für Mobilgeräte und Gamepad-Unterstützung mit haptischem Feedback |
+| **Lokalisierung (i18n)** | ✅ | 6 vollständige Sprachen: PT-BR, EN, ES, RU, ZH-CN, DE |
+| **PWA & Vercel-Bereitstellung** | ✅ | Service Worker für Offline-Betrieb und optimierter Build (`vercel.json`) |
 
 ---
 

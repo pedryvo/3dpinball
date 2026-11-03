@@ -162,9 +162,15 @@ export class AudioManager {
     }
   }
 
+  private activeTableMusic: 'outpost' | 'command_post' | 'mine' = 'outpost';
+
+  public setTableMusicTheme(tableId: 'outpost' | 'command_post' | 'mine'): void {
+    this.activeTableMusic = tableId;
+  }
+
   /**
    * Procedural FM/MIDI retro space synthesizer soundtrack
-   * Produces an authentic 1995 DOS/Win32 space outpost ambient groove.
+   * Produces authentic 1995 DOS/Win32 space outpost ambient grooves tailored per table.
    */
   public startMusic(): void {
     if (!this.musicEnabled || this.isSynthesizingMusic) return;
@@ -174,13 +180,31 @@ export class AudioManager {
     this.isSynthesizingMusic = true;
     let step = 0;
 
-    // Chord progression in D minor space scale: Dm -> Bb -> Gm -> A
-    const bassNotes = [73.42, 58.27, 49.00, 55.00]; // D2, Bb1, G1, A1
-    const leadScale = [293.66, 329.63, 349.23, 392.00, 440.00, 523.25, 587.33]; // D4, E4, F4, G4, A4, C5, D5
-
     const tick = () => {
       if (!this.isSynthesizingMusic || !this.musicEnabled) return;
       const now = ctx.currentTime;
+
+      // Table-specific scales and chord progressions
+      let bassNotes: number[];
+      let leadScale: number[];
+      let filterCutoff = 350;
+
+      if (this.activeTableMusic === 'command_post') {
+        // C-minor tactical alert
+        bassNotes = [65.41, 77.78, 87.31, 58.27]; // C2, Eb2, F2, Bb1
+        leadScale = [261.63, 311.13, 349.23, 392.00, 466.16, 523.25];
+        filterCutoff = 480;
+      } else if (this.activeTableMusic === 'mine') {
+        // A-minor deep cavern & crystals
+        bassNotes = [55.00, 43.65, 49.00, 65.41]; // A1, F1, G1, C2
+        leadScale = [440.00, 523.25, 659.25, 783.99, 880.00, 1046.50];
+        filterCutoff = 280;
+      } else {
+        // D-minor space exploration (Outpost)
+        bassNotes = [73.42, 58.27, 49.00, 55.00]; // D2, Bb1, G1, A1
+        leadScale = [293.66, 329.63, 349.23, 392.00, 440.00, 523.25, 587.33];
+        filterCutoff = 350;
+      }
 
       // Bass synth note every 4 beats
       if (step % 4 === 0) {
@@ -195,8 +219,8 @@ export class AudioManager {
         bassOsc.frequency.setValueAtTime(bassFreq, now);
 
         filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(350, now);
-        filter.frequency.exponentialRampToValueAtTime(120, now + 0.35);
+        filter.frequency.setValueAtTime(filterCutoff, now);
+        filter.frequency.exponentialRampToValueAtTime(110, now + 0.35);
 
         bassGain.gain.setValueAtTime(this.musicVolume * 0.28, now);
         bassGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.38);
@@ -222,8 +246,8 @@ export class AudioManager {
         leadOsc.frequency.setValueAtTime(leadFreq, now);
 
         leadFilter.type = 'bandpass';
-        leadFilter.frequency.setValueAtTime(800 + (step % 8) * 120, now);
-        leadFilter.Q.value = 3.0;
+        leadFilter.frequency.setValueAtTime(700 + (step % 8) * 110, now);
+        leadFilter.Q.value = 3.2;
 
         leadGain.gain.setValueAtTime(this.musicVolume * 0.16, now);
         leadGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.18);

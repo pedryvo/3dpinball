@@ -86,3 +86,37 @@ Este documento registra detalhadamente todas as etapas de desenvolvimento, decis
 ### 8. Validação da Compilação de Produção
 - `npx tsc --noEmit`: 0 erros de tipagem.
 - `npm run build` (`tsc && vite build`): bundle final gerado em `dist/` com `index.html` (21.47 kB) e `index-[hash].js` (73.15 kB) em 209ms.
+
+---
+
+### 9. Suporte a Gamepad API & Vibração Háptica Dual-Rumble (`src/input/gamepad-manager.ts`)
+- **Objetivo:** Permitir controle nativo via gamepads padrão (Xbox, PlayStation, controles retrô USB) com sensações táteis.
+- **Mapeamento:**
+  - L1 / L2 / Gatilho Esquerdo: Flipper Esquerdo
+  - R1 / R2 / Gatilho Direito: Flipper Direito
+  - Botão A / D-Pad Baixo: Carregar e soltar mola de lançamento
+  - D-Pad Esquerda/Direita/Cima ou Analógico: Nudge da mesa
+  - Botão Start: Pausar
+  - Botão Back/Select: Iniciar novo jogo
+- **Vibração:** Efeito `dual-rumble` disparado via `vibrationActuator` em impactos de bumpers, explosões, acionamento de flippers e perda de bola (Game Over).
+
+---
+
+### 10. Trilha Sonora Procedimental Adaptativa por Mesa (`src/audio/audio-manager.ts`)
+- **Objetivo:** Diferenciar acusticamente cada ambiente espacial:
+  - **Colônia Espacial (Outpost):** Escala em Ré menor (D-minor) com arpeggios exploratórios e filtro de 350Hz.
+  - **Posto de Comando (Command Post):** Andamento acelerado em Dó menor (C-minor) militar com ressonância de 480Hz.
+  - **Mina de Cristais (Mine):** Baixo profundo em Lá menor (A-minor) a 280Hz com harmônicos cristalinos de alta oitava.
+
+---
+
+### 11. Capacidade Offline PWA & Service Worker (`public/manifest.json`, `public/sw.js`)
+- **Objetivo:** Permitir instalação do jogo como Progressive Web App (PWA) e execução 100% offline.
+- **Arquivos:**
+  - `manifest.json`: Ícones, orientação flexível, tema azul marinho retrô (`#000080`), modo `standalone`.
+  - `sw.js`: Service Worker com estratégia Cache-First para os arquivos estáticos, paletas, bitmaps e áudios WAV.
+
+---
+
+### 12. Sincronização da Documentação Multilíngue
+- Atualização de todas as 6 versões dos READMEs (`README.md`, `README.pt-BR.md`, `README.es.md`, `README.de.md`, `README.zh-CN.md`, `README.ru.md`) com badges de fase 6 e tabelas de progresso 100% concluídas.

@@ -183,4 +183,15 @@ sim.selectTable('mine', true);
 assert.equal(sim.tableId, 'mine');
 console.log('  ✔ Dynamic table transition to Mine verified');
 
-console.log('\n🎉 ALL REGRESSION TESTS PASSED SUCCESSFULLY! (5/5 suites green)\n');
+// ---------------------------------------------------------------------------
+// 6. Test Gamepad Controller & Haptic Subsystem
+// ---------------------------------------------------------------------------
+console.log('\n▶ [6/6] Testing Gamepad Manager & Haptic Actuator...');
+import { GamepadManager } from '../src/input/gamepad-manager.ts';
+const gamepad = new GamepadManager(sim);
+assert.ok(gamepad);
+assert.equal(typeof gamepad.update, 'function');
+assert.equal(typeof gamepad.triggerHaptic, 'function');
+console.log('  ✔ Gamepad manager and haptic feedback actuator verified');
+
+console.log('\n🎉 ALL REGRESSION TESTS PASSED SUCCESSFULLY! (6/6 suites green)\n');

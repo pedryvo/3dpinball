@@ -1,6 +1,7 @@
 import { AudioManager } from './audio/audio-manager';
 import { getTableTranslation, i18n } from './i18n';
 import type { TableId } from './i18n/types';
+import { GamepadManager } from './input/gamepad-manager';
 import { PinballSimulation } from './physics/engine';
 import { TableRenderer } from './renderer/table-renderer';
 import { MenuManager } from './ui/menu-manager';
@@ -16,15 +17,21 @@ window.addEventListener('DOMContentLoaded', async () => {
   const audio = new AudioManager();
   const sim = new PinballSimulation('outpost');
   const renderer = new TableRenderer(canvas);
+  const gamepad = new GamepadManager(sim);
 
   // 2. Preload Authentic Binary Assets in Background
   renderer.preloadTableAssets().catch((err) => console.warn('Renderer asset preload:', err));
   audio.preloadSounds().catch((err) => console.warn('Audio preload:', err));
 
   // 3. Setup UI & Win95 Menu Chrome
-  const menu = new MenuManager(sim, audio, (tableId: TableId) => {
+  const switchTable = (tableId: TableId) => {
     sim.selectTable(tableId, false);
+    audio.setTableMusicTheme(tableId);
     renderer.showBanner(getTableTranslation(i18n.t, tableId).name, 2.5);
+  };
+
+  const menu = new MenuManager(sim, audio, (tableId: TableId) => {
+    switchTable(tableId);
   });
 
   // 4. Keyboard Controls
@@ -90,13 +97,13 @@ window.addEventListener('DOMContentLoaded', async () => {
 
       // Table Selection Shortcuts
       case 'Digit1':
-        sim.selectTable('outpost', false);
+        switchTable('outpost');
         break;
       case 'Digit2':
-        sim.selectTable('command_post', false);
+        switchTable('command_post');
         break;
       case 'Digit3':
-        sim.selectTable('mine', false);
+        switchTable('mine');
         break;
     }
   };
@@ -207,6 +214,9 @@ window.addEventListener('DOMContentLoaded', async () => {
     const dt = Math.min((currentTime - lastTime) / 1000, 0.05);
     lastTime = currentTime;
 
+    // Gamepad controller input polling
+    gamepad.update();
+
     // Physics step
     sim.step(dt);
 
@@ -215,6 +225,11 @@ window.addEventListener('DOMContentLoaded', async () => {
     for (const ev of events) {
       if (ev.type === 'sound' && ev.sound) {
         audio.playSound(ev.sound, ev.panX ?? 246);
+        if (ev.sound.includes('ZAP') || ev.sound.includes('EXPLO')) {
+          gamepad.triggerHaptic(0.6, 120);
+        } else if (ev.sound.includes('KACHUNK') || ev.sound.includes('FLIPPER')) {
+          gamepad.triggerHaptic(0.35, 60);
+        }
       } else if (ev.type === 'banner' && ev.bannerKey) {
         const dict = i18n.t;
         const text = (dict.led as Record<string, string>)[ev.bannerKey]
@@ -222,9 +237,9 @@ window.addEventListener('DOMContentLoaded', async () => {
           ?? ev.bannerKey;
         renderer.showBanner(text);
       } else if (ev.type === 'table_change' && ev.tableId) {
-        sim.selectTable(ev.tableId, false);
-        renderer.showBanner(getTableTranslation(i18n.t, ev.tableId).name);
+        switchTable(ev.tableId);
       } else if (ev.type === 'game_over') {
+        gamepad.triggerHaptic(0.8, 250);
         menu.recordScoreIfEligible(sim.score, sim.tableId);
         renderer.showBanner(i18n.t.led.gameOver, 5.0);
       }

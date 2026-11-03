@@ -1,0 +1,23 @@
+{
+  "name": "3-D Ultra Pinball (1995 Dynamix / Sierra)",
+  "short_name": "3D Pinball",
+  "description": "Port Web moderno do clássico jogo de pinball espacial 3-D Ultra Pinball",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0e17",
+  "theme_color": "#000080",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/assets/BALLS.BMP",
+      "sizes": "192x192",
+      "type": "image/bmp"
+    },
+    {
+      "src": "/assets/BALLS.BMP",
+      "sizes": "512x512",
+      "type": "image/bmp"
+    }
+  ],
+  "categories": ["games", "arcade", "retro"]
+}
