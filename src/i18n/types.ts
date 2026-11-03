@@ -1,5 +1,7 @@
 export type LocaleCode = 'pt-BR' | 'en' | 'es' | 'ru' | 'zh-CN' | 'de';
 
+export type TableId = 'outpost' | 'command_post' | 'mine';
+
 export interface TableTranslation {
   name: string;
   subtitle: string;
