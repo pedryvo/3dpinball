@@ -236,69 +236,11 @@
 
     #pinball-canvas {
       display: block;
-      width: 100%;
-      height: 100%;
       max-width: 100%;
       max-height: 100%;
-      object-fit: contain;
-      aspect-ratio: 4 / 3;
       image-rendering: pixelated;
-    }
-
-    .splash-screen {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: #000000;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      z-index: 50;
-      transition: opacity 0.35s ease;
-    }
-
-    .splash-screen.hidden {
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    #splash-canvas {
-      width: 100%;
-      height: 100%;
-      max-width: 100%;
-      max-height: 100%;
-      aspect-ratio: 4 / 3;
-      object-fit: contain;
-      image-rendering: pixelated;
-    }
-
-    .splash-prompt {
-      position: absolute;
-      bottom: 24px;
-      background: rgba(0, 0, 0, 0.85);
-      border: 2px solid #ffbb00;
-      padding: 8px 18px;
-      border-radius: 4px;
-      color: #ffea00;
-      font-family: monospace;
-      font-size: 13px;
-      font-weight: bold;
-      letter-spacing: 0.5px;
-      box-shadow: 0 0 16px rgba(255, 187, 0, 0.5);
-      text-align: center;
-    }
-
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.25; }
-    }
-
-    .splash-blink {
-      animation: blink 1.2s infinite ease-in-out;
+      image-rendering: crisp-edges;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
     }
 
     /* Status Bar */
@@ -609,18 +551,12 @@
     <!-- Canvas Frame -->
     <div class="canvas-container">
       <canvas id="pinball-canvas" width="640" height="480"></canvas>
-      <div id="splash-overlay" class="splash-screen">
-        <canvas id="splash-canvas" width="640" height="480"></canvas>
-        <div class="splash-prompt">
-          <span class="splash-blink" id="splash-prompt-text">▶ CLIQUE OU PRESSIONE QUALQUER TECLA PARA JOGAR ◀</span>
-        </div>
-      </div>
     </div>
 
     <!-- Status Bar -->
     <div class="win-status-bar">
       <div class="status-panel grow" id="status-hint">Shift / Barra de Espaço para jogar | Z / / para Flippers</div>
-      <div class="status-panel">640×480 @ 60Hz</div>
+      <div class="status-panel" id="status-res">640×480 @ 60Hz</div>
       <div class="status-panel">WASM 480Hz Core</div>
     </div>
   </div>
@@ -801,6 +737,22 @@
       </div>
       <div class="modal-footer">
         <button class="btn-dialog btn-dialog-close">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Intro Modal Dialog -->
+  <div class="modal-overlay" id="modal-intro">
+    <div class="modal-dialog" style="max-width: 660px;">
+      <div class="win-title-bar">
+        <span>3-D Ultra Pinball (Dynamix / Sierra 1995)</span>
+        <button class="win-btn modal-close">✕</button>
+      </div>
+      <div class="modal-body" style="background: #000; padding: 6px; display: flex; justify-content: center; align-items: center;">
+        <canvas id="splash-canvas" width="640" height="480" style="max-width: 100%; height: auto; image-rendering: pixelated;"></canvas>
+      </div>
+      <div class="modal-footer" style="justify-content: center;">
+        <button class="btn-dialog btn-dialog-close">OK / Jogar</button>
       </div>
     </div>
   </div>

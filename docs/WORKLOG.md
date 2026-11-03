@@ -226,3 +226,17 @@ Este documento registra detalhadamente todas as etapas de desenvolvimento, decis
   - A janela Win95 e o container do canvas agora utilizam `width: 100%`, `height: 100%` com `flex: 1 1 auto`.
   - O `#pinball-canvas` expande-se dinamicamente mantendo a proporção exata 4:3 via `object-fit: contain; aspect-ratio: 4 / 3;`, ocupando 100% do espaço vertical e horizontal disponível com renderização nítida pixelada.
   - O botão de Maximizar (`□`) da barra de título foi vinculado para alternar o modo de tela cheia do navegador (`document.documentElement.requestFullscreen()`).
+
+---
+
+### 24. Eliminação da Tela Preta de Inicialização e Dimensionamento Dinâmico Pixel-Fit (`main.ts`, `index.html`)
+- **Problema 1 Identificado:** O jogo abria em uma tela preta porque o elemento `#splash-overlay` cobria todo o canvas com `background: #000000`, e como scripts de módulo ES podiam carregar após o disparo do evento `DOMContentLoaded`, o listener `window.addEventListener('DOMContentLoaded', ...)` não disparava, travando a inicialização do loop de jogo.
+- **Solução 1:**
+  - Removido o overlay bloqueador de splash screen. O jogo agora carrega e renderiza a mesa de pinball imediatamente desde o primeiro quadro.
+  - Implementado padrão de inicialização com verificação de `document.readyState`: se o DOM já estiver pronto (`document.readyState !== 'loading'`), `initGame()` é invocado imediatamente.
+  - A tela de abertura clássica com o logotipo e fanfarra foi transferida para um diálogo modal do Windows 95 (`modal-intro`), acessível pelo menu "Ajuda > Tela de Abertura (Intro)".
+- **Problema 2 Identificado:** A tentativa de forçar 100% width/height simultaneamente a `aspect-ratio: 4/3` e `object-fit: contain` em CSS flexbox causava conflito nas regras de dimensionamento de caixas do navegador, fazendo com que o elemento canvas revertesse para seu tamanho intrínseco (640×480).
+- **Solução 2:**
+  - Implementada a função responsiva `resizeCanvasToFit()` acionada por `window.resize` e `ResizeObserver`. Ela calcula matematicamente o retângulo 4:3 máximo que cabe no container da viewport e define explicitamente `canvas.style.width` e `canvas.style.height` em pixels.
+  - O painel de status exibe a resolução real renderizada (ex: `1360×1020` em monitores Full HD 1080p).
+  - Em telas ultrawide, celulares e tablets, a mesa de pinball agora preenche 100% da altura ou largura disponível de forma impecável e sem bordas desnecessárias.

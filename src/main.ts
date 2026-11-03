@@ -7,28 +7,75 @@ import { PinballSimulation } from './physics/engine';
 import { TableRenderer } from './renderer/table-renderer';
 import { MenuManager } from './ui/menu-manager';
 
-window.addEventListener('DOMContentLoaded', async () => {
+async function initGame(): Promise<void> {
   const canvas = document.getElementById('pinball-canvas') as HTMLCanvasElement;
   if (!canvas) {
     console.error('Pinball canvas not found');
     return;
   }
 
-  // 1. Initialize Core Subsystems
+  // 1. Dynamic Canvas Responsive Sizing (100% width/height of viewport)
+  const resizeCanvasToFit = () => {
+    const container = canvas.parentElement;
+    if (!container) return;
+    const w = container.clientWidth;
+    const h = container.clientHeight;
+    if (w <= 0 || h <= 0) return;
+
+    const targetAspect = 640 / 480; // 4:3
+    const containerAspect = w / h;
+
+    let canvasWidth: number;
+    let canvasHeight: number;
+
+    if (containerAspect > targetAspect) {
+      canvasHeight = h;
+      canvasWidth = Math.floor(h * targetAspect);
+    } else {
+      canvasWidth = w;
+      canvasHeight = Math.floor(w / targetAspect);
+    }
+
+    canvas.style.width = `${canvasWidth}px`;
+    canvas.style.height = `${canvasHeight}px`;
+
+    const resPanel = document.getElementById('status-res');
+    if (resPanel) {
+      resPanel.textContent = `${canvasWidth}×${canvasHeight}`;
+    }
+  };
+
+  window.addEventListener('resize', resizeCanvasToFit);
+  if (typeof ResizeObserver !== 'undefined' && canvas.parentElement) {
+    new ResizeObserver(resizeCanvasToFit).observe(canvas.parentElement);
+  }
+  resizeCanvasToFit();
+  setTimeout(resizeCanvasToFit, 50);
+
+  // 2. Initialize Core Subsystems
   const audio = new AudioManager();
   const sim = new PinballSimulation('outpost');
   const renderer = new TableRenderer(canvas);
   const gamepad = new GamepadManager(sim);
 
-  // 2. Preload Authentic Binary Assets in Background
+  // 3. Preload Authentic Binary Assets in Background
   renderer.preloadTableAssets().catch((err) => console.warn('Renderer asset preload:', err));
   audio.preloadSounds().catch((err) => console.warn('Audio preload:', err));
 
-  // 2.5 Retro Splash / Intro Screen (Unlocks Web Audio smoothly)
-  const splashOverlay = document.getElementById('splash-overlay');
-  const splashCanvas = document.getElementById('splash-canvas') as HTMLCanvasElement | null;
-  let splashActive = true;
+  // Audio start on first user interaction anywhere
+  const initAudioOnce = () => {
+    audio.ensureContext();
+    if (audio.isMusicOn()) {
+      audio.startMusic();
+    }
+    window.removeEventListener('pointerdown', initAudioOnce);
+    window.removeEventListener('keydown', initAudioOnce);
+  };
+  window.addEventListener('pointerdown', initAudioOnce);
+  window.addEventListener('keydown', initAudioOnce);
 
+  // 4. Retro Intro Modal loader
+  const splashCanvas = document.getElementById('splash-canvas') as HTMLCanvasElement | null;
   const loadSplashLogo = async () => {
     if (!splashCanvas) return;
     try {
@@ -58,24 +105,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   };
   loadSplashLogo().catch(() => {});
 
-  const dismissSplash = () => {
-    if (!splashActive) return;
-    splashActive = false;
-    audio.ensureContext();
-    if (audio.isMusicOn()) {
-      audio.startMusic();
-    }
-    audio.playSound('FANFARE1.WAV');
-    if (splashOverlay) {
-      splashOverlay.classList.add('hidden');
-    }
-  };
-
-  if (splashOverlay) {
-    splashOverlay.addEventListener('click', dismissSplash);
-  }
-
-  // 3. Setup UI & Win95 Menu Chrome
+  // 5. Setup UI & Win95 Menu Chrome
   const switchTable = (tableId: TableId) => {
     sim.selectTable(tableId, false);
     audio.setTableMusicTheme(tableId);
@@ -89,23 +119,15 @@ window.addEventListener('DOMContentLoaded', async () => {
       switchTable(tableId);
     },
     () => {
-      // Show Intro again
-      splashActive = true;
-      if (splashOverlay) {
-        splashOverlay.classList.remove('hidden');
-      }
+      menu.openModal('modal-intro');
     }
   );
 
-  // 4. Keyboard Controls
+  // 6. Keyboard Controls
   const activeKeys = new Set<string>();
 
   const handleKeyDown = (e: KeyboardEvent) => {
     audio.ensureContext();
-    if (splashActive) {
-      dismissSplash();
-      return;
-    }
     if (activeKeys.has(e.code)) return;
     activeKeys.add(e.code);
 
@@ -262,19 +284,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   setupTapBtn('btn-touch-nudge-up', () => sim.nudge(0, -1));
   setupTapBtn('btn-touch-nudge-right', () => sim.nudge(1, 0));
 
-  // Audio start on first user interaction anywhere
-  const initAudioOnce = () => {
-    audio.ensureContext();
-    if (audio.isMusicOn()) {
-      audio.startMusic();
-    }
-    window.removeEventListener('pointerdown', initAudioOnce);
-    window.removeEventListener('keydown', initAudioOnce);
-  };
-  window.addEventListener('pointerdown', initAudioOnce);
-  window.addEventListener('keydown', initAudioOnce);
-
-  // 6. Game Loop
+  // 7. Game Loop
   let lastTime = performance.now();
 
   const gameLoop = (currentTime: number) => {
@@ -327,4 +337,14 @@ window.addEventListener('DOMContentLoaded', async () => {
   };
 
   requestAnimationFrame(gameLoop);
-});
+}
+
+if (typeof document !== 'undefined') {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      initGame().catch(console.error);
+    });
+  } else {
+    initGame().catch(console.error);
+  }
+}
