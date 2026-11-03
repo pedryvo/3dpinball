@@ -153,3 +153,12 @@ Este documento registra detalhadamente todas as etapas de desenvolvimento, decis
 - **Objetivo:** Permitir ajuste fino em tempo real de:
   - Sliders de Volume Geral, Efeitos (SFX) e Música Espacial.
   - Toggles para ativação de rastros de bola (Motion Trails) e partículas de colisão.
+
+---
+
+### 17. Renderizador de Fontes e Dígitos Bitmap da Sierra (`src/renderer/bitmap-font.ts`)
+- **Objetivo:** Renderizar os dígitos do placar LED exatamente com as fontes bitmap originais extraídas dos pacotes de recursos:
+  - `SCORE.PAL`: paleta autêntica de 256 cores do placar.
+  - `NUMBERS.BMP`: 11 quadros de dígitos (0 a 9 e pontuação) de 16×24 pixels.
+  - `FONTSM.BMP` / `FONTBIG.BMP`: 95/96 glifos ASCII com canal alfa por índice zero.
+  - `drawScore()`: desenha os dígitos do placar LED em verde esmeralda com fallback suave caso os ativos ainda estejam carregando.

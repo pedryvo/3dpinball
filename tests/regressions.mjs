@@ -215,4 +215,16 @@ assert.ok(true, 'Particle system update should run cleanly');
 particles.clear();
 console.log('  ✔ Particle emission, burst math, and life decay cycle verified');
 
-console.log('\n🎉 ALL REGRESSION TESTS PASSED SUCCESSFULLY! (7/7 suites green)\n');
+// ---------------------------------------------------------------------------
+// 8. Test Authentic Sierra Bitmap Font & LED Digit Renderer
+// ---------------------------------------------------------------------------
+console.log('\n▶ [8/8] Testing Sierra Bitmap Font & LED Glyph Renderer...');
+import { BitmapFontRenderer } from '../src/renderer/bitmap-font.ts';
+const fontRenderer = new BitmapFontRenderer();
+assert.ok(fontRenderer);
+assert.equal(fontRenderer.isLoaded(), false);
+assert.equal(typeof fontRenderer.preloadFontAssets, 'function');
+assert.equal(typeof fontRenderer.drawScore, 'function');
+console.log('  ✔ Sierra bitmap font renderer initialized and contract verified');
+
+console.log('\n🎉 ALL REGRESSION TESTS PASSED SUCCESSFULLY! (8/8 suites green)\n');

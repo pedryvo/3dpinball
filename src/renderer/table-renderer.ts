@@ -2,6 +2,7 @@ import { parseDynamixBitmap, parseDynamixPalette } from '../archive/parser';
 import { getTableTranslation, i18n } from '../i18n';
 import type { TableId } from '../i18n/types';
 import type { FlipperState, PinballBall, PinballSimulation } from '../physics/engine';
+import { BitmapFontRenderer } from './bitmap-font';
 import { ParticleSystem } from './particle-system';
 
 export class TableRenderer {
@@ -14,6 +15,7 @@ export class TableRenderer {
   private marqueeOffset = 0;
   private animTimer = 0;
   public particles = new ParticleSystem();
+  private bitmapFont = new BitmapFontRenderer();
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
@@ -24,6 +26,9 @@ export class TableRenderer {
   }
 
   public async preloadTableAssets(): Promise<void> {
+    // Preload authentic Sierra LED scoreboard bitmap fonts
+    this.bitmapFont.preloadFontAssets().catch(() => {});
+
     const tableConfigs: Array<{ id: TableId; bmp: string; pal: string; animBmp: string }> = [
       { id: 'outpost', bmp: '/assets/OUTPOSTJ.BMP', pal: '/assets/OUTPOST.PAL', animBmp: '/assets/OUTPOST2.BMP' },
       { id: 'command_post', bmp: '/assets/CPJ.BMP', pal: '/assets/CP.PAL', animBmp: '/assets/CP2.BMP' },
@@ -550,12 +555,17 @@ export class TableRenderer {
     ctx.fillStyle = '#5680a6';
     ctx.fillText(dict.hud.score.toUpperCase(), 492, 26);
 
-    ctx.font = 'bold 20px monospace';
-    ctx.fillStyle = '#00ff66';
-    ctx.shadowColor = '#00ff66';
-    ctx.shadowBlur = 8;
     const formattedScore = sim.score.toLocaleString('en-US');
-    ctx.fillText(formattedScore, 492, 50);
+    const drewBitmapScore = this.bitmapFont.drawScore(ctx, formattedScore, 492, 34);
+
+    if (!drewBitmapScore) {
+      ctx.font = 'bold 20px monospace';
+      ctx.fillStyle = '#00ff66';
+      ctx.shadowColor = '#00ff66';
+      ctx.shadowBlur = 8;
+      ctx.fillText(formattedScore, 492, 50);
+      ctx.shadowBlur = 0;
+    }
 
     // LED Multiplier & Balls Remaining
     ctx.shadowBlur = 0;
