@@ -493,6 +493,17 @@
       transform: translateY(-2px);
     }
 
+    .table-preview-canvas {
+      width: 106px;
+      height: 95px;
+      display: block;
+      margin: 0 auto 6px auto;
+      border: 1px solid #000000;
+      box-shadow: 1px 1px 0 #ffffff;
+      background: #000000;
+      image-rendering: pixelated;
+    }
+
     .table-card-title {
       font-weight: bold;
       margin-bottom: 4px;
@@ -709,14 +720,17 @@
       <div class="modal-body">
         <div class="table-cards-grid">
           <div class="table-choice-card" data-table="outpost">
+            <canvas class="table-preview-canvas" id="preview-canvas-outpost" width="106" height="95"></canvas>
             <div class="table-card-title">1. Colônia Espacial</div>
             <div class="table-card-desc">Construa o espaçoporto, ative o laboratório e complete o Super Glide.</div>
           </div>
           <div class="table-choice-card" data-table="command_post">
+            <canvas class="table-preview-canvas" id="preview-canvas-command_post" width="106" height="95"></canvas>
             <div class="table-card-title">2. Posto de Comando</div>
             <div class="table-card-desc">Defenda o posto tático militar com reparos, suprimentos e alerta vermelho.</div>
           </div>
           <div class="table-choice-card" data-table="mine">
+            <canvas class="table-preview-canvas" id="preview-canvas-mine" width="106" height="95"></canvas>
             <div class="table-card-title">3. Mina de Cristais</div>
             <div class="table-card-desc">Detone as cavernas para extrair minérios e ative o Multi-Ball das 3 Esferas.</div>
           </div>

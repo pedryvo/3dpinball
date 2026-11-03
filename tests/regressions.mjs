@@ -218,7 +218,7 @@ console.log('  ✔ Particle emission, burst math, and life decay cycle verified'
 // ---------------------------------------------------------------------------
 // 8. Test Authentic Sierra Bitmap Font & LED Digit Renderer
 // ---------------------------------------------------------------------------
-console.log('\n▶ [8/8] Testing Sierra Bitmap Font & LED Glyph Renderer...');
+console.log('\n▶ [8/10] Testing Sierra Bitmap Font & LED Glyph Renderer...');
 import { BitmapFontRenderer } from '../src/renderer/bitmap-font.ts';
 const fontRenderer = new BitmapFontRenderer();
 assert.ok(fontRenderer);
@@ -227,4 +227,60 @@ assert.equal(typeof fontRenderer.preloadFontAssets, 'function');
 assert.equal(typeof fontRenderer.drawScore, 'function');
 console.log('  ✔ Sierra bitmap font renderer initialized and contract verified');
 
-console.log('\n🎉 ALL REGRESSION TESTS PASSED SUCCESSFULLY! (8/8 suites green)\n');
+// ---------------------------------------------------------------------------
+// 9. Test Multiball Sphere-Sphere Elastic Ball Collision
+// ---------------------------------------------------------------------------
+console.log('\n▶ [9/10] Testing Multiball Sphere-to-Sphere Elastic Collision...');
+const multiSim = new PinballSimulation('outpost');
+multiSim.spawnMultiball();
+assert.ok(multiSim.balls.length >= 2, 'Should have multiple active balls');
+const b1 = multiSim.balls[0];
+const b2 = multiSim.balls[1];
+b1.active = true;
+b2.active = true;
+b1.sinkholeId = null;
+b2.sinkholeId = null;
+b1.rampId = null;
+b2.rampId = null;
+b1.inPlungerLane = false;
+b2.inPlungerLane = false;
+
+// Position balls within collision distance moving toward each other in open playfield
+b1.x = 220;
+b1.y = 270;
+b1.vx = 80;
+b1.vy = 0;
+
+b2.x = 232;
+b2.y = 270;
+b2.vx = -80;
+b2.vy = 0;
+
+multiSim.step(0.016);
+assert.ok(b1.vx < 80, 'Ball 1 should rebound from elastic impact');
+assert.ok(b2.vx > -80, 'Ball 2 should rebound from elastic impact');
+assert.ok(multiSim.events.some((e) => e.type === 'sound' && e.sound === 'KACHUNK1.WAV'), 'Should emit collision sound');
+console.log('  ✔ Sphere-sphere pairwise elastic impulse and sound trigger verified');
+
+// ---------------------------------------------------------------------------
+// 10. Test Table Selection Animated Thumbnail Bitmaps (PICKOP, PICKCP, PICKMINE)
+// ---------------------------------------------------------------------------
+console.log('\n▶ [10/10] Testing Table Selection Thumbnail Bitmaps & Palettes...');
+for (const [bmpName, palName] of [
+  ['PICKOP.BMP', 'OUTPOST.PAL'],
+  ['PICKCP.BMP', 'CP.PAL'],
+  ['PICKMINE.BMP', 'MINE.PAL'],
+]) {
+  const bmpData = fs.readFileSync(path.join(rootDir, 'public/assets', bmpName));
+  const palData = fs.readFileSync(path.join(rootDir, 'public/assets', palName));
+  const bmp = parseDynamixBitmap(bmpData);
+  const pal = parseDynamixPalette(palData);
+
+  assert.ok(bmp.frames.length >= 18, `${bmpName} must have at least 18 frames`);
+  assert.equal(bmp.frames[0].width, 106, `${bmpName} width must be 106px`);
+  assert.equal(bmp.frames[0].height, 95, `${bmpName} height must be 95px`);
+  assert.equal(pal.entries.length, 256, `${palName} must have 256 palette entries`);
+}
+console.log('  ✔ All 3 table selection preview bitmaps decoded and dimension-verified (106x95)');
+
+console.log('\n🎉 ALL REGRESSION TESTS PASSED SUCCESSFULLY! (10/10 suites green)\n');

@@ -1,3 +1,4 @@
+import { parseDynamixBitmap, parseDynamixPalette } from '../archive/parser';
 import { getTableTranslation, i18n } from '../i18n';
 import type { LocaleCode, TableId, TranslationDictionary } from '../i18n/types';
 import type { PinballSimulation } from '../physics/engine';
@@ -39,6 +40,7 @@ export class MenuManager {
       this.updateI18nLabels(dict);
     });
     this.updateI18nLabels(i18n.t);
+    this.loadTablePreviews().catch(() => {});
   }
 
   private loadHighScores(): void {
@@ -373,5 +375,55 @@ export class MenuManager {
     if (el) {
       el.textContent = text;
     }
+  }
+
+  public async loadTablePreviews(): Promise<void> {
+    if (typeof window === 'undefined' || typeof document === 'undefined' || typeof fetch === 'undefined') {
+      return;
+    }
+
+    const configs: Array<{ id: TableId; bmpUrl: string; palUrl: string; canvasId: string }> = [
+      { id: 'outpost', bmpUrl: '/assets/PICKOP.BMP', palUrl: '/assets/OUTPOST.PAL', canvasId: 'preview-canvas-outpost' },
+      { id: 'command_post', bmpUrl: '/assets/PICKCP.BMP', palUrl: '/assets/CP.PAL', canvasId: 'preview-canvas-command_post' },
+      { id: 'mine', bmpUrl: '/assets/PICKMINE.BMP', palUrl: '/assets/MINE.PAL', canvasId: 'preview-canvas-mine' },
+    ];
+
+    await Promise.all(
+      configs.map(async (cfg) => {
+        try {
+          const canvas = document.getElementById(cfg.canvasId) as HTMLCanvasElement | null;
+          if (!canvas) return;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) return;
+
+          const [bmpRes, palRes] = await Promise.all([
+            fetch(cfg.bmpUrl),
+            fetch(cfg.palUrl),
+          ]);
+          if (!bmpRes.ok || !palRes.ok) return;
+
+          const bmpBuf = await bmpRes.arrayBuffer();
+          const palBuf = await palRes.arrayBuffer();
+
+          const bmp = parseDynamixBitmap(bmpBuf);
+          const pal = parseDynamixPalette(palBuf);
+
+          if (bmp.frames.length === 0) return;
+          const frame = bmp.frames[0];
+          const imgData = ctx.createImageData(frame.width, frame.height);
+          const data32 = new Uint32Array(imgData.data.buffer);
+          const pix = frame.pixels;
+          const len = Math.min(pix.length, data32.length);
+
+          for (let i = 0; i < len; i++) {
+            data32[i] = pal.rgba32[pix[i]];
+          }
+
+          ctx.putImageData(imgData, 0, 0);
+        } catch {
+          // Graceful fallback
+        }
+      })
+    );
   }
 }

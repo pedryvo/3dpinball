@@ -163,6 +163,9 @@ export class TableRenderer {
     // 5. Draw Sinkholes
     this.renderSinkholes(sim);
 
+    // 5.5 Draw Playfield Multiplier & Ball Save Lamps
+    this.renderPlayfieldLamps(sim);
+
     // 6. Draw Plunger Spring
     this.renderPlunger(sim);
 
@@ -371,6 +374,109 @@ export class TableRenderer {
 
       ctx.restore();
     }
+  }
+
+  private renderPlayfieldLamps(sim: PinballSimulation): void {
+    const { ctx } = this;
+    ctx.save();
+
+    // 1. Multiplier Inserts (2X, 3X, 5X, 10X) in center lower table
+    const multipliers = [
+      { val: 2, x: 200, y: 318, label: '2X' },
+      { val: 3, x: 227, y: 308, label: '3X' },
+      { val: 5, x: 253, y: 308, label: '5X' },
+      { val: 10, x: 280, y: 318, label: '10X' },
+    ];
+
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    for (const m of multipliers) {
+      const isLit = sim.multiplier >= m.val;
+
+      // Lamp housing
+      ctx.fillStyle = isLit ? 'rgba(255, 180, 0, 0.25)' : 'rgba(15, 22, 35, 0.6)';
+      ctx.beginPath();
+      ctx.arc(m.x, m.y, 9, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Lamp rim
+      ctx.strokeStyle = isLit ? '#ffd040' : '#304055';
+      ctx.lineWidth = 1.5;
+      if (isLit) {
+        ctx.shadowColor = '#ffbb00';
+        ctx.shadowBlur = 8;
+      } else {
+        ctx.shadowBlur = 0;
+      }
+      ctx.stroke();
+
+      // Lamp lens inner glow
+      if (isLit) {
+        ctx.fillStyle = '#ffea66';
+      } else {
+        ctx.fillStyle = '#405268';
+      }
+      ctx.font = 'bold 9px monospace';
+      ctx.fillText(m.label, m.x, m.y + 0.5);
+    }
+    ctx.shadowBlur = 0;
+
+    // 2. Ball Save Lamp & Shield Barrier
+    if (sim.ballSaveTimer > 0) {
+      // If expiring (< 2s), flash at 8Hz
+      const flash = sim.ballSaveTimer > 2.0 || Math.floor(sim.ballSaveTimer * 8) % 2 === 0;
+
+      if (flash) {
+        // Oval Insert Lamp: "BALL SAVE"
+        ctx.fillStyle = 'rgba(0, 255, 200, 0.22)';
+        ctx.strokeStyle = '#00ffcc';
+        ctx.lineWidth = 1.8;
+        ctx.shadowColor = '#00ffcc';
+        ctx.shadowBlur = 10;
+
+        ctx.beginPath();
+        ctx.ellipse(240, 345, 26, 8, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 8px monospace';
+        ctx.fillText('BALL SAVE', 240, 345.5);
+
+        // Futuristic Holographic Energy Barrier across the drain
+        ctx.beginPath();
+        ctx.moveTo(195, 452);
+        ctx.quadraticCurveTo(240, 464, 285, 452);
+        ctx.strokeStyle = 'rgba(0, 255, 220, 0.85)';
+        ctx.lineWidth = 3;
+        ctx.shadowColor = '#00ffff';
+        ctx.shadowBlur = 12;
+        ctx.stroke();
+
+        // Energy shield nodes
+        ctx.fillStyle = '#00ffff';
+        ctx.beginPath();
+        ctx.arc(195, 452, 3, 0, Math.PI * 2);
+        ctx.arc(285, 452, 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    } else {
+      // Inactive dark insert
+      ctx.fillStyle = 'rgba(15, 22, 35, 0.5)';
+      ctx.strokeStyle = '#253545';
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.ellipse(240, 345, 26, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#3a4e62';
+      ctx.font = 'bold 8px monospace';
+      ctx.fillText('BALL SAVE', 240, 345.5);
+    }
+
+    ctx.restore();
   }
 
   private renderPlunger(sim: PinballSimulation): void {

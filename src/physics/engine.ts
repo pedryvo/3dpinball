@@ -69,10 +69,10 @@ export class PinballSimulation {
   public gameOver = false;
   public nudgeOffsetX = 0;
   public nudgeOffsetY = 0;
+  public ballSaveTimer = 0;
   public events: EngineEvent[] = [];
 
   private nextBallId = 1;
-  private ballSaveTimer = 0;
 
   constructor(initialTable: TableId = 'outpost') {
     this.selectTable(initialTable, true);
@@ -286,6 +286,7 @@ export class PinballSimulation {
           this.stepSingleBall(ball, subDt);
         }
       }
+      this.resolveBallBallCollisions();
     }
 
     // Update ball trails once per render frame
@@ -548,6 +549,56 @@ export class PinballSimulation {
       if (Math.abs(flipper.angularVelocity) > 0.5) {
         ball.vx += surfVx * 0.58 + proj.normalX * 165;
         ball.vy += surfVy * 0.58 - 220;
+      }
+    }
+  }
+
+  private resolveBallBallCollisions(): void {
+    const active = this.balls.filter((b) => b.active && !b.sinkholeId && !b.rampId);
+    if (active.length < 2) return;
+
+    const kernel = getWasmPhysicsKernel();
+    for (let i = 0; i < active.length; i++) {
+      for (let j = i + 1; j < active.length; j++) {
+        const b1 = active[i];
+        const b2 = active[j];
+        const dx = b1.x - b2.x;
+        const dy = b1.y - b2.y;
+        const dist = kernel.distance2d(0, 0, dx, dy);
+        const minDist = b1.radius + b2.radius;
+
+        if (dist < minDist && dist > 1e-4) {
+          const nx = dx / dist;
+          const ny = dy / dist;
+          const overlap = minDist - dist;
+
+          // Positional relaxation separation
+          b1.x += nx * overlap * 0.5;
+          b1.y += ny * overlap * 0.5;
+          b2.x -= nx * overlap * 0.5;
+          b2.y -= ny * overlap * 0.5;
+
+          // Relative velocity along collision normal
+          const dvx = b1.vx - b2.vx;
+          const dvy = b1.vy - b2.vy;
+          const vn = kernel.dot2d(dvx, dvy, nx, ny);
+
+          if (vn < 0) {
+            // Elastic collision between identical steel balls (e = 0.94)
+            const restitution = 0.94;
+            const impulse = -(1 + restitution) * vn * 0.5;
+            b1.vx += impulse * nx;
+            b1.vy += impulse * ny;
+            b2.vx -= impulse * nx;
+            b2.vy -= impulse * ny;
+
+            this.events.push({
+              type: 'sound',
+              sound: 'KACHUNK1.WAV',
+              panX: (b1.x + b2.x) * 0.5,
+            });
+          }
+        }
       }
     }
   }

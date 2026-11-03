@@ -109,15 +109,23 @@ O projeto é estruturado em camadas desacopladas que operam em harmonia com zero
   - 🇩🇪 Alemão (`de`)
   - 🇨🇳 Chinês Simplificado (`zh-CN`)
   - 🇷🇺 Russo (`ru`)
-- [x] Suíte automatizada de testes de regressão (`tests/regressions.mjs` executada via `npm test`) validando 5 suítes com 100% de aprovação.
+- [x] Suíte automatizada de testes de regressão (`tests/regressions.mjs` executada via `npm test`) validando 10 suítes com 100% de aprovação.
 - [x] Compilação estática de produção (`npm run build`) validada via TypeScript e Vite.
+
+### Fase 7: Polimento Arcade & Fidelidade Dinâmica (Concluída)
+- [x] Suporte a Gamepad API (`src/input/gamepad-manager.ts`) com controles padrão (Xbox, PlayStation, USB retrô) e vibração háptica `dual-rumble` em impactos de bumpers, explosões e fim de jogo.
+- [x] Colisão elástica esfera-esfera em Multi-Ball (`src/physics/engine.ts`) com resolução de penetração, conservação de momento ($e = 0.94$) e som de choque estéreo `KACHUNK1.WAV`.
+- [x] Miniaturas gráficas autênticas no seletor de mesas (`PICKOP.BMP`, `PICKCP.BMP`, `PICKMINE.BMP`) decodificadas com paletas originais da Dynamix.
+- [x] Lâmpadas indicadoras de multiplicador no playfield (`2X`, `3X`, `5X`, `10X`) e escudo de força holográfico Ball Save (`src/renderer/table-renderer.ts`).
+- [x] Sistema de partículas neon sci-fi (`src/renderer/particle-system.ts`) e renderizador de fontes bitmap Sierra (`src/renderer/bitmap-font.ts`).
+- [x] Instalação como Progressive Web App (PWA) e execução 100% offline (`manifest.json` e `sw.js`).
 
 ---
 
 ## 🛠️ Comandos de Desenvolvimento e Validação
 
 ```bash
-# Executar a suíte completa de testes automatizados
+# Executar a suíte completa de testes automatizados (10/10 suítes)
 npm test
 
 # Executar a verificação estrita de tipagem TypeScript
@@ -135,7 +143,6 @@ npm run preview
 
 ---
 
-## 🚀 Próximos Passos & Melhorias Futuras (Fase 7)
+## 🚀 Próximos Passos & Melhorias Futuras (Fase 8)
 - [ ] Reprodução de vídeos Cinepak/AVI originais (`SIERRA.AVI`, `INTRO.AVI`) através de decodificador em WebAssembly.
 - [ ] Tabela global de recordes via edge API / KV na nuvem.
-- [ ] Suporte a Gamepad API (controles Xbox, PlayStation e retro USB com vibração tátil / rumble nos rebatedores e colisões).

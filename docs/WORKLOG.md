@@ -182,3 +182,32 @@ Este documento registra detalhadamente todas as etapas de desenvolvimento, decis
   - Checagem estrita de tipos TypeScript (`npx tsc --noEmit`).
   - Execução das 8 suítes completas de testes de regressão (`npm test`).
   - Compilação estática de distribuição (`npm run build`).
+
+---
+
+### 20. Miniaturas Gráficas Autênticas no Seletor de Mesas (`PICKOP.BMP`, `PICKCP.BMP`, `PICKMINE.BMP`)
+- **Objetivo:** Exibir as ilustrações originais de 106×95 pixels da Dynamix nas caixas de seleção de mesa do modal Win95 (`modal-tables`).
+- **Implementação:**
+  - Adição dos elementos `<canvas class="table-preview-canvas" id="preview-canvas-*">` em `index.html`.
+  - Método `loadTablePreviews()` em `src/ui/menu-manager.ts` que decodifica via `parseDynamixBitmap` e `parseDynamixPalette` os arquivos `PICKOP.BMP` (Outpost), `PICKCP.BMP` (Command Post) e `PICKMINE.BMP` (Mine).
+  - Suíte de regressão número 10 adicionada em `tests/regressions.mjs` validando dimensões e paletas de 256 cores.
+
+---
+
+### 21. Física de Colisão Elástica Esfera-Esfera em Multi-Ball (`src/physics/engine.ts`)
+- **Objetivo:** Permitir interação física mútua realista quando múltiplas esferas de aço compartilham a mesa.
+- **Implementação:**
+  - Método `resolveBallBallCollisions()` executado a 480Hz no loop de sub-passos.
+  - Cálculo de separação posicional de penetração ao longo da normal de contato $\hat{n}$.
+  - Resposta a impacto elástico 1D com coeficiente de restituição $e = 0.94$ baseado na velocidade relativa projetada.
+  - Emissão de evento de áudio `KACHUNK1.WAV` com posicionamento estéreo balanceado entre as esferas.
+  - Suíte de regressão número 9 adicionada em `tests/regressions.mjs` garantindo conservação de momento e repulsão física simétrica.
+
+---
+
+### 22. Lâmpadas Indicadoras de Multiplicador e Escudo Holográfico Ball Save no Playfield (`src/renderer/table-renderer.ts`)
+- **Objetivo:** Renderizar iluminação autêntica de mesa pinball para o multiplicador de pontuação e proteção de bola.
+- **Implementação:**
+  - Método `renderPlayfieldLamps()` desenhando os insertos `2X`, `3X`, `5X` e `10X` no centro inferior da mesa com anéis metálicos, lentes translúcidas e brilho âmbar conforme `sim.multiplier`.
+  - Inserto oval iluminado `BALL SAVE` em ciano neon (`#00ffcc`).
+  - Barreira de força holográfica sobre o vão de drenagem inferior (entre $X = 195$ e $X = 285$) com pulso luminoso de 8Hz quando restam menos de 2 segundos de proteção.
