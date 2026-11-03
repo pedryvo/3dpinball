@@ -226,6 +226,62 @@
       image-rendering: pixelated;
     }
 
+    .splash-screen {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: calc(100% - 4px);
+      height: calc(100% - 4px);
+      background: #000000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 50;
+      transition: opacity 0.35s ease;
+    }
+
+    .splash-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #splash-canvas {
+      width: 100%;
+      height: 100%;
+      max-width: 640px;
+      max-height: 480px;
+      aspect-ratio: 640 / 480;
+      object-fit: contain;
+      image-rendering: pixelated;
+    }
+
+    .splash-prompt {
+      position: absolute;
+      bottom: 24px;
+      background: rgba(0, 0, 0, 0.85);
+      border: 2px solid #ffbb00;
+      padding: 8px 18px;
+      border-radius: 4px;
+      color: #ffea00;
+      font-family: monospace;
+      font-size: 13px;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+      box-shadow: 0 0 16px rgba(255, 187, 0, 0.5);
+      text-align: center;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.25; }
+    }
+
+    .splash-blink {
+      animation: blink 1.2s infinite ease-in-out;
+    }
+
     /* Status Bar */
     .win-status-bar {
       display: flex;
@@ -514,6 +570,7 @@
       <button class="menu-bar-btn" id="menu-btn-help" data-menu="help">Ajuda</button>
       <div class="dropdown-menu" id="dropdown-help">
         <div class="dropdown-item" data-action="controls" id="item-controls">Controles</div>
+        <div class="dropdown-item" data-action="intro" id="item-intro">Tela de Abertura (Intro)</div>
         <div class="dropdown-divider"></div>
         <div class="dropdown-item" data-action="credits" id="item-credits">Sobre / Créditos</div>
       </div>
@@ -522,6 +579,12 @@
     <!-- Canvas Frame -->
     <div class="canvas-container">
       <canvas id="pinball-canvas" width="640" height="480"></canvas>
+      <div id="splash-overlay" class="splash-screen">
+        <canvas id="splash-canvas" width="640" height="480"></canvas>
+        <div class="splash-prompt">
+          <span class="splash-blink" id="splash-prompt-text">▶ CLIQUE OU PRESSIONE QUALQUER TECLA PARA JOGAR ◀</span>
+        </div>
+      </div>
     </div>
 
     <!-- Status Bar -->

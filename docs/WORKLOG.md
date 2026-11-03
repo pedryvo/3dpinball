@@ -162,3 +162,23 @@ Este documento registra detalhadamente todas as etapas de desenvolvimento, decis
   - `NUMBERS.BMP`: 11 quadros de dígitos (0 a 9 e pontuação) de 16×24 pixels.
   - `FONTSM.BMP` / `FONTBIG.BMP`: 95/96 glifos ASCII com canal alfa por índice zero.
   - `drawScore()`: desenha os dígitos do placar LED em verde esmeralda com fallback suave caso os ativos ainda estejam carregando.
+
+---
+
+### 18. Tela de Abertura / Splash Screen Retro (`LOGO.BMP` & `LOGO.PAL`)
+- **Objetivo:** Recriar a abertura autêntica de 1995 da Dynamix/Sierra e resolver definitivamente o desbloqueio de áudio em navegadores modernos (Safari iOS e Chrome Mobile).
+- **Implementação:**
+  - Decodificação do bitmap original `LOGO.BMP` (640×480) com a paleta `LOGO.PAL` sobre o elemento `#splash-canvas`.
+  - Letreiro pulsante clássico: `"▶ CLIQUE OU PRESSIONE QUALQUER TECLA PARA JOGAR ◀"`.
+  - Ao primeiro clique ou tecla, a `AudioContext` é ativada, toca a fanfarra `FANFARE1.WAV`, inicia a trilha sintetizada e desvanece a tela de abertura.
+  - Opção no menu "Ajuda > Tela de Abertura (Intro)" para rever a introdução a qualquer momento.
+
+---
+
+### 19. Modelo de CI/CD GitHub Actions (`docs/ci-workflow.yml`)
+- **Objetivo:** Garantir integridade contínua e qualidade estrita de código.
+- **Etapas do Pipeline:**
+  - Instalação limpa com cache de npm (`npm ci` / `npm install`).
+  - Checagem estrita de tipos TypeScript (`npx tsc --noEmit`).
+  - Execução das 8 suítes completas de testes de regressão (`npm test`).
+  - Compilação estática de distribuição (`npm run build`).

@@ -18,12 +18,19 @@ export class MenuManager {
   private highScores: HighScoreEntry[] = [];
   private activeDropdown: string | null = null;
   private onTableSelected?: (id: TableId) => void;
+  private onShowIntro?: () => void;
   private pendingHighScore: { score: number; table: TableId } | null = null;
 
-  constructor(sim: PinballSimulation, audio: AudioManager, onTableSelected?: (id: TableId) => void) {
+  constructor(
+    sim: PinballSimulation,
+    audio: AudioManager,
+    onTableSelected?: (id: TableId) => void,
+    onShowIntro?: () => void
+  ) {
     this.sim = sim;
     this.audio = audio;
     this.onTableSelected = onTableSelected;
+    this.onShowIntro = onShowIntro;
     this.loadHighScores();
     this.setupDropdownListeners();
     this.setupModalListeners();
@@ -203,6 +210,9 @@ export class MenuManager {
         break;
       case 'controls':
         this.openModal('modal-controls');
+        break;
+      case 'intro':
+        this.onShowIntro?.();
         break;
       case 'credits':
         this.openModal('modal-credits');

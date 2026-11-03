@@ -1,4 +1,5 @@
 import { AudioManager } from './audio/audio-manager';
+import { parseDynamixBitmap, parseDynamixPalette } from './archive/parser';
 import { getTableTranslation, i18n } from './i18n';
 import type { TableId } from './i18n/types';
 import { GamepadManager } from './input/gamepad-manager';
@@ -23,6 +24,57 @@ window.addEventListener('DOMContentLoaded', async () => {
   renderer.preloadTableAssets().catch((err) => console.warn('Renderer asset preload:', err));
   audio.preloadSounds().catch((err) => console.warn('Audio preload:', err));
 
+  // 2.5 Retro Splash / Intro Screen (Unlocks Web Audio smoothly)
+  const splashOverlay = document.getElementById('splash-overlay');
+  const splashCanvas = document.getElementById('splash-canvas') as HTMLCanvasElement | null;
+  let splashActive = true;
+
+  const loadSplashLogo = async () => {
+    if (!splashCanvas) return;
+    try {
+      const [palRes, bmpRes] = await Promise.all([
+        fetch('/assets/LOGO.PAL'),
+        fetch('/assets/LOGO.BMP'),
+      ]);
+      if (!palRes.ok || !bmpRes.ok) return;
+      const palette = parseDynamixPalette(await palRes.arrayBuffer());
+      const bitmap = parseDynamixBitmap(await bmpRes.arrayBuffer());
+      if (bitmap.frames.length > 0) {
+        const frame = bitmap.frames[0];
+        const ctx = splashCanvas.getContext('2d');
+        if (ctx) {
+          const imgData = ctx.createImageData(frame.width, frame.height);
+          const data32 = new Uint32Array(imgData.data.buffer);
+          const pix = frame.pixels;
+          for (let i = 0; i < pix.length; i++) {
+            data32[i] = palette.rgba32[pix[i]];
+          }
+          ctx.putImageData(imgData, 0, 0);
+        }
+      }
+    } catch {
+      // Fallback
+    }
+  };
+  loadSplashLogo().catch(() => {});
+
+  const dismissSplash = () => {
+    if (!splashActive) return;
+    splashActive = false;
+    audio.ensureContext();
+    if (audio.isMusicOn()) {
+      audio.startMusic();
+    }
+    audio.playSound('FANFARE1.WAV');
+    if (splashOverlay) {
+      splashOverlay.classList.add('hidden');
+    }
+  };
+
+  if (splashOverlay) {
+    splashOverlay.addEventListener('click', dismissSplash);
+  }
+
   // 3. Setup UI & Win95 Menu Chrome
   const switchTable = (tableId: TableId) => {
     sim.selectTable(tableId, false);
@@ -30,15 +82,30 @@ window.addEventListener('DOMContentLoaded', async () => {
     renderer.showBanner(getTableTranslation(i18n.t, tableId).name, 2.5);
   };
 
-  const menu = new MenuManager(sim, audio, (tableId: TableId) => {
-    switchTable(tableId);
-  });
+  const menu = new MenuManager(
+    sim,
+    audio,
+    (tableId: TableId) => {
+      switchTable(tableId);
+    },
+    () => {
+      // Show Intro again
+      splashActive = true;
+      if (splashOverlay) {
+        splashOverlay.classList.remove('hidden');
+      }
+    }
+  );
 
   // 4. Keyboard Controls
   const activeKeys = new Set<string>();
 
   const handleKeyDown = (e: KeyboardEvent) => {
     audio.ensureContext();
+    if (splashActive) {
+      dismissSplash();
+      return;
+    }
     if (activeKeys.has(e.code)) return;
     activeKeys.add(e.code);
 
