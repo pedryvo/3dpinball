@@ -212,9 +212,9 @@ export class PinballSimulation {
     let launched = false;
     for (const ball of this.balls) {
       if (ball.active && (ball.inPlungerLane || (ball.x > 446 && ball.y > 360))) {
-        ball.vy = -(540 + charge * 460);
-        ball.vx = -22 - Math.random() * 18;
-        ball.inPlungerLane = false;
+        ball.vy = -(640 + charge * 440);
+        ball.vx = 0;
+        ball.inPlungerLane = true;
         launched = true;
       }
     }
@@ -382,10 +382,10 @@ export class PinballSimulation {
     ball.x += ball.vx * dt;
     ball.y += ball.vy * dt;
 
-    // Once the ball clears the top of the launch lane (x < 448), close the one-way gate
-    if (ball.inPlungerLane && ball.x < 446 && ball.y < 145) {
+    // Once the ball clears the top arch and rolls into the playfield (x < 445)
+    if (ball.inPlungerLane && ball.x < 445) {
       ball.inPlungerLane = false;
-      this.events.push({ type: 'sound', sound: 'GATE1.WAV', panX: 446 });
+      this.events.push({ type: 'sound', sound: 'GATE1.WAV', panX: 445 });
     }
 
     // 4. Collide with static table walls (`PB_COL`)
@@ -393,9 +393,9 @@ export class PinballSimulation {
       this.collideBallWithSegment(ball, wall.x1, wall.y1, wall.x2, wall.y2, wall.restitution ?? 0.6);
     }
 
-    // One-way plunger gate at top of launch lane once ball is in playfield
-    if (!ball.inPlungerLane) {
-      this.collideBallWithSegment(ball, 452, 50, 452, 145, 0.55);
+    // One-way plunger gate: prevent ball in playfield from entering plunger lane from the left
+    if (!ball.inPlungerLane && ball.x < 452 && ball.vx > 0 && ball.y > 60 && ball.y < 145) {
+      this.collideBallWithSegment(ball, 452, 60, 452, 145, 0.55);
     }
 
     // 5. Collide with articulated flippers (`PB_FLIP`)

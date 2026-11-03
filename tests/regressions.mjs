@@ -154,7 +154,13 @@ sim.releasePlunger();
 assert.equal(sim.plungerCharging, false);
 assert.equal(sim.plungerCharge, 0);
 assert.ok(sim.balls[0].vy < -400, 'Ball should have negative Y launch velocity');
-assert.equal(sim.balls[0].inPlungerLane, false);
+
+// Step physics so the ball travels up the launch lane and enters active playfield
+for (let f = 0; f < 50; f++) {
+  sim.step(0.016);
+}
+assert.equal(sim.balls[0].inPlungerLane, false, 'Ball should exit plunger lane into active playfield');
+assert.ok(sim.balls[0].x < 445, 'Ball should be inside main playfield');
 console.log('  ✔ Plunger charging and launch verified');
 
 // Test flipper actuation

@@ -13,11 +13,13 @@ function createBasePlayfieldWalls(): WallSegment[] {
     { x1: 28, y1: 110, x2: 75, y2: 45, restitution: 0.55 },
     { x1: 75, y1: 45, x2: 175, y2: 22, restitution: 0.55 },
     { x1: 175, y1: 22, x2: 335, y2: 22, restitution: 0.55 },
-    { x1: 335, y1: 22, x2: 430, y2: 52, restitution: 0.55 },
-    { x1: 430, y1: 52, x2: 482, y2: 120, restitution: 0.55 },
+    // Top-right arch over the plunger lane
+    { x1: 335, y1: 22, x2: 425, y2: 24, restitution: 0.55 },
+    { x1: 425, y1: 24, x2: 465, y2: 36, restitution: 0.55 },
+    { x1: 465, y1: 36, x2: 482, y2: 65, restitution: 0.55 },
 
     // Plunger outer right wall
-    { x1: 482, y1: 120, x2: 482, y2: 465, restitution: 0.45 },
+    { x1: 482, y1: 65, x2: 482, y2: 465, restitution: 0.45 },
     // Plunger floor
     { x1: 452, y1: 465, x2: 482, y2: 465, restitution: 0.3 },
     // Plunger inner divider wall (separating playfield from launch lane)

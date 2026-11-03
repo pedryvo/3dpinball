@@ -211,3 +211,18 @@ Este documento registra detalhadamente todas as etapas de desenvolvimento, decis
   - Método `renderPlayfieldLamps()` desenhando os insertos `2X`, `3X`, `5X` e `10X` no centro inferior da mesa com anéis metálicos, lentes translúcidas e brilho âmbar conforme `sim.multiplier`.
   - Inserto oval iluminado `BALL SAVE` em ciano neon (`#00ffcc`).
   - Barreira de força holográfica sobre o vão de drenagem inferior (entre $X = 195$ e $X = 285$) com pulso luminoso de 8Hz quando restam menos de 2 segundos de proteção.
+
+---
+
+### 23. Correção do Lançador de Bola (Plunger) e Layout 100% Tela Cheia (`tables.ts`, `engine.ts`, `index.html`)
+- **Problema 1 Identificado:** Ao lançar a bola com a mola, o arco superior da canaleta de lançamento cortava diagonalmente de $(482, 120)$ a $(430, 52)$, agindo como um teto inclinado baixo com normal descendente que rebatia a bola de volta para baixo. Além disso, a porta unidirecional bloqueava a passagem antes da bola ingressar no playfield.
+- **Solução 1:**
+  - Redesenhado o arco superior da canaleta em `src/tables/tables.ts` para subir até $Y = 22$ e contornar suavemente para a esquerda: $(482, 65) \to (465, 36) \to (425, 24) \to (335, 22)$.
+  - A velocidade inicial de lançamento foi ajustada para subida vertical pura (`vx = 0`, `vy = -(640 + charge * 440)`), preservando `inPlungerLane = true` até a bola ultrapassar o topo da canaleta ($X < 445$).
+  - O portão unidirecional agora só bloqueia o retorno se a bola estiver no playfield e tentar entrar na canaleta pela esquerda (`ball.x < 452 && ball.vx > 0`).
+- **Problema 2 Identificado:** A janela possuía largura e altura restritas a 640×480 com margens fixas na página.
+- **Solução 2:**
+  - `html, body` ajustados para `100vw` e `100vh` sem overflow ou barras de rolagem.
+  - A janela Win95 e o container do canvas agora utilizam `width: 100%`, `height: 100%` com `flex: 1 1 auto`.
+  - O `#pinball-canvas` expande-se dinamicamente mantendo a proporção exata 4:3 via `object-fit: contain; aspect-ratio: 4 / 3;`, ocupando 100% do espaço vertical e horizontal disponível com renderização nítida pixelada.
+  - O botão de Maximizar (`□`) da barra de título foi vinculado para alternar o modo de tela cheia do navegador (`document.documentElement.requestFullscreen()`).

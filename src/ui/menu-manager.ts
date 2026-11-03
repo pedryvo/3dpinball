@@ -288,6 +288,24 @@ export class MenuManager {
         }
       });
     });
+
+    // Window title bar controls
+    const btnMax = document.getElementById('btn-win-maximize');
+    if (btnMax) {
+      btnMax.addEventListener('click', () => this.toggleFullscreen());
+    }
+    const btnMin = document.getElementById('btn-win-minimize');
+    if (btnMin) {
+      btnMin.addEventListener('click', () => {
+        this.sim.paused = !this.sim.paused;
+      });
+    }
+    const btnClose = document.getElementById('btn-win-close');
+    if (btnClose) {
+      btnClose.addEventListener('click', () => {
+        this.openModal('modal-credits');
+      });
+    }
   }
 
   public openModal(modalId: string): void {
