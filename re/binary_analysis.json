@@ -1,0 +1,80 @@
+{
+  "installer": {
+    "name": "3D Ultra Pinball1.exe",
+    "sha256": "9c58e1d58e65395938cfc7696bf6fb634d03c46a70e0560dd6822df650c01ed4",
+    "format": "pe32-i386",
+    "packager": "Clickteam Install Creator (InstItClass)",
+    "archive_offset": "0x13000",
+    "file_table_chunk": {
+      "cid": "0x123a",
+      "offset": "0x198ec",
+      "compressed_size": 1195,
+      "uncompressed_size": 2554,
+      "entry_count": 29
+    },
+    "data_chunk": {
+      "cid": "0x7f7f",
+      "offset": "0x19da7"
+    },
+    "evidence_ids": [
+      "ev_cf9ff84455dee7b90885045b6e314994814888fd0cf2c9091d63501910eb4652",
+      "ev_bf0f0b5bc25ca1eaab40be7352a3b82ac0bcb3236be43a82f198d2a4ddec2dc4",
+      "ev_fe26eacf36785f007facd55c079e9570034bb3699c7278114da8e835b1c2270d",
+      "ev_89bb0447e35ad31133bff7eafd9ba26eba762f0cfb6e85dceb7cc3526ea93902"
+    ]
+  },
+  "executable": {
+    "name": "PINBALL.EXE",
+    "sha256": "4e675a78ba3aa5dc11d5f85f494e4beaefc7f2ea7b85f5f0ab9dc6264946696b",
+    "format": "pe32-i386",
+    "compiler": "Borland C++ (1994)",
+    "entry_point": "0x00410000",
+    "procedure_count": 1863,
+    "external_imports": 99,
+    "segments": [
+      { "name": "CODE", "start": "0x00410000", "end": "0x0045cfff", "size": 315392 },
+      { "name": "DATA", "start": "0x00460000", "end": "0x004a2fff", "size": 274432 },
+      { "name": ".idata", "start": "0x004be000", "end": "0x004befff", "size": 4096 },
+      { "name": ".edata", "start": "0x004c0000", "end": "0x004c0fff", "size": 4096 },
+      { "name": ".rsrc", "start": "0x004c8000", "end": "0x004cafff", "size": 12288 }
+    ],
+    "rtti_classes": [
+      "StreamIO",
+      "FileRStream",
+      "FileWStream",
+      "TBBuffer",
+      "GFXDevManager",
+      "GFXContext",
+      "GFXZBuffer",
+      "GFXBuffer",
+      "GFXDevWinG",
+      "GFXBitmap",
+      "GFXBitmapArray",
+      "GFXFont",
+      "GFXPalette"
+    ],
+    "source_modules": [
+      "..\\SOURCE\\PB_INIT.C",
+      "..\\SOURCE\\PB_3INIT.C",
+      "..\\SOURCE\\PB_BIN.C",
+      "..\\SOURCE\\PB_COL.C",
+      "..\\SOURCE\\PB_SPLIN.C",
+      "..\\SOURCE\\PB_FRAME.C",
+      "..\\SOURCE\\PB_INTER.C",
+      "..\\SOURCE\\TS\\TS_DRAW.C",
+      "..\\SOURCE\\TS\\TS_FILE.C",
+      "..\\SOURCE\\TS\\TS_UTIL.C",
+      "..\\SOURCE\\TS\\TS_UTILO.C"
+    ],
+    "evidence_ids": [
+      "ev_b9bed366d04041b0d529581430a67ea36937edf5e1655ef78dcb276557d803c7",
+      "ev_5446da8be93a9152bb0f83bd3925d07cd1ee3b767f6835d2b9fd65d519e149ce",
+      "ev_d99f044d354d6db8316c543c1a5769ce9606c0beaaf62624da9ff2b95868cdd0",
+      "ev_f026cc1af44e5009f57a057d21ee83f239460d3de2ef5b49926648014485a8cc",
+      "ev_ba6b631e0a07db0ffe875467d841b03555210efac7fab7367cc0843872ab44be",
+      "ev_61df49508d6acc147b6248cfdfa36408f4faedbe4567c5b9337fe67f804a9866",
+      "ev_5d923940a4d443ccd47a86bb280d003eb250aa34182f0193a416a1c94fab9df2",
+      "ev_5b7ee4611ddba5abd884ff6d5eea4391f9dba31887c1f381365403ae536d2181"
+    ]
+  }
+}

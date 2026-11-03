@@ -1,0 +1,27 @@
+{
+  "exported_procedures": [
+    { "name": "@mainWndProc$qpvuiuil", "address": "0x00428ec9", "role": "Main application window procedure (keyboard input, menu commands, flipper & nudge dispatch)" },
+    { "name": "@pinWndProc$qpvuiuil", "address": "0x004292c0", "role": "Pinball playfield child window procedure (640x480 viewport sizing, mouse flipper click)" },
+    { "name": "@scrWndProc$qpvuiuil", "address": "0x0042955e", "role": "Scoreboard / LED display child window procedure" },
+    { "name": "@shell_process$qpvuiuil", "address": "0x00429e04", "role": "Main menu shell dialog/screen procedure (SHELL.ITF)" },
+    { "name": "@prefs_process$qpvuiuil", "address": "0x0042a4f5", "role": "Preferences dialog procedure (PREFS.ITF / PBPREFS.CFG)" },
+    { "name": "@newgame_process$qpvuiuil", "address": "0x0042b47c", "role": "New game / player count setup procedure (NEWGAME.ITF)" },
+    { "name": "@picker_process$qpvuiuil", "address": "0x0042c720", "role": "Table picker dialog procedure (PICKER.ITF: Colony, Command Post, Mine)" },
+    { "name": "@highs_process$qpvuiuil", "address": "0x0042cb29", "role": "High scores table view procedure (HIGHS.ITF / HISCORES.DAT)" },
+    { "name": "@hs_process$qpvuiuil", "address": "0x0042cd76", "role": "High score name entry dialog procedure (HSDIALG.ANM)" },
+    { "name": "@keys_process$qpvuiuil", "address": "0x0042d3b1", "role": "Keyboard & mouse controls customization procedure (KEYS.ITF)" },
+    { "name": "@credits_process$qpvuiuil", "address": "0x0042dc6e", "role": "Scrolling credits procedure (CREDIT.ITF / CREDITS.RES)" },
+    { "name": "@quit_process$qpvuiuil", "address": "0x0042e23f", "role": "Quit confirmation dialog procedure (QUITA.ITF / QUITG.ITF)" },
+    { "name": "@conta_process$qpvuiuil", "address": "0x0042e500", "role": "Continue game prompt A procedure (CONTA.ITF)" },
+    { "name": "@contb_process$qpvuiuil", "address": "0x0042e7aa", "role": "Continue game prompt B procedure (CONTB.ITF)" },
+    { "name": "@tb_window_process_parent$qpvuiuil", "address": "0x0043cb98", "role": "Dynamix toolbox parent window dispatcher" },
+    { "name": "@tb_window_process_child$qpvuiuil", "address": "0x0043d090", "role": "Dynamix toolbox child window dispatcher" },
+    { "name": "@tb_window_process_dialog$qpvuiuil", "address": "0x0043d2ec", "role": "Dynamix toolbox modal dialog dispatcher" },
+    { "name": "@tb_interface_process_edit_message$qpvuiuil", "address": "0x00440614", "role": "Dynamix text input box handler" },
+    { "name": "@tb_sound_message$qpvuiuil", "address": "0x004422a0", "role": "Audio/MCI notification handler" }
+  ],
+  "menu_commands": {
+    "0x65": "Toggle Pause / Sound",
+    "0xa4": "Start New Game / End Current Game"
+  }
+}
